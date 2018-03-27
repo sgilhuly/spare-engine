@@ -6,8 +6,9 @@ OBJS := $(addsuffix .o,$(basename $(SRCS)))
 DEPS := $(OBJS:.o=.d)
 
 LUA_HOME := $(HOME)/tmp/lua-5.3.4/src
+GLM_HOME := $(HOME)/tmp/glm-0.9.9-a2
 
-INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(LUA_HOME)
+INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(LUA_HOME) $(GLM_HOME)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 LINK_DIRS := $(LUA_HOME)
