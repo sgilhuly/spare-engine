@@ -14,4 +14,4 @@ public:
 
 	GLuint id = 0;
 };
-}
+} // namespace spare

@@ -13,4 +13,4 @@ private:
 	int frames;
 	std::chrono::time_point<std::chrono::high_resolution_clock> last_update;
 };
-}
+} // namespace spare

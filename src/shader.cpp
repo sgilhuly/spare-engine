@@ -1,6 +1,9 @@
 #include "shader.h"
 
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 #include <GL/glew.h>
 
@@ -47,7 +50,7 @@ namespace spare {
 Shader::Shader() {
 }
 
-bool Shader::InitFromSource(const GLchar* shader_source[], bool is_vertex_shader) {
+bool Shader::InitFromSource(const char* shader_source[], bool is_vertex_shader) {
 	id = glCreateShader(is_vertex_shader ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
 	glShaderSource(id, 1, shader_source, NULL);
 	glCompileShader(id);
@@ -65,4 +68,21 @@ bool Shader::InitFromSource(const GLchar* shader_source[], bool is_vertex_shader
 
 	return true;
 }
+
+bool Shader::InitFromFile(const char* filepath, bool is_vertex_shader) {
+	std::string shader_source;
+	std::ifstream shader_stream(filepath, std::ios::in);
+	if (shader_stream.is_open()) {
+		std::stringstream sstr;
+		sstr << shader_stream.rdbuf();
+		shader_source = sstr.str();
+		shader_stream.close();
+	} else {
+		cout << "Could not open " << filepath << endl;
+		return false;
+	}
+
+	const char* source_pointer = shader_source.c_str();
+	return InitFromSource(&source_pointer, is_vertex_shader);
 }
+} // namespace spare

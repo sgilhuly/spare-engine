@@ -7,6 +7,7 @@
 
 #include "camera.h"
 #include "fps.h"
+#include "game_object.h"
 #include "shader_program.h"
 #include "texture.h"
 
@@ -29,14 +30,11 @@ private:
 	ShaderProgram program;
 	Texture texture_bmp;
 	Texture texture_dds;
+	GameObject monkey;
 
 	int width;
 	int height;
 	bool show_quad = true;
-
-	GLuint vertex_buffer = 0;
-	GLuint colour_buffer = 0;
-	GLuint uv_buffer = 0;
 	GLuint ibo = 0;
 };
 } // namespace spare

@@ -10,9 +10,6 @@
 
 using std::cout;
 using std::endl;
-using std::string;
-
-#include <GL/glew.h>
 
 GLuint loadBMP_custom(const char * imagepath){
 
@@ -199,7 +196,7 @@ namespace spare {
 Texture::Texture() {
 }
 
-bool Texture::InitDds(const string& imagepath) {
+bool Texture::InitDds(const std::string& imagepath) {
 	if (!(id = loadDDS(imagepath.c_str()))) {
 		cout << "Failed to load " << imagepath << " as a DDS image" << endl;
 		return false;
@@ -208,7 +205,7 @@ bool Texture::InitDds(const string& imagepath) {
 	return true;
 }
 
-bool Texture::InitBmp(const string& imagepath) {
+bool Texture::InitBmp(const std::string& imagepath) {
 	if (!(id = loadBMP_custom(imagepath.c_str()))) {
 		cout << "Failed to load " << imagepath << " as a BMP image" << endl;
 		return false;
@@ -221,4 +218,4 @@ void Texture::Cleanup() {
 	glDeleteTextures(1, &id);
 	id = 0;
 }
-}
+} // namespace spare

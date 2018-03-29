@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-#include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <SDL2/SDL.h>
 
 const float mouse_x_speed = 0.5f;
 const float mouse_y_speed = 0.5f;
@@ -34,7 +34,7 @@ void Camera::OnLoop(float delta) {
 	rotation += x * mouse_x_speed * delta;
 	rotation = std::fmod(rotation, 2 * pi);
 	pitch += y * mouse_y_speed * delta;
-	pitch = std::fmin(std::fmax(pitch, -pi / 4), pi / 4);
+	pitch = std::fmin(std::fmax(pitch, -pi / 3), pi / 3);
 
 	float cam_x = cos(rotation) * cos(pitch) * camera_distance;
 	float cam_y = sin(pitch) * camera_distance;
@@ -42,4 +42,4 @@ void Camera::OnLoop(float delta) {
 
 	view = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(0,0,0), glm::vec3(0,1,0));
 }
-}
+} // namespace spare

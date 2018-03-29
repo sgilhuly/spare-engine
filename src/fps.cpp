@@ -34,4 +34,4 @@ bool FpsCounter::update() {
 
 	return false;
 }
-}
+} // namespace spare

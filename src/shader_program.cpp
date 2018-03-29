@@ -51,7 +51,7 @@ ShaderProgram::ShaderProgram() {
 
 bool ShaderProgram::Init() {
 	// For now, hardcode some simple shaders
-	const GLchar* vertex_shader_source[] = {
+	/*const GLchar* vertex_shader_source[] = {
 		"#version 330 core\n"
 		"in vec3 vertex_position;\n"
 		"in vec2 vertex_uv;\n"
@@ -71,17 +71,18 @@ bool ShaderProgram::Init() {
 		"void main() {\n"
 		"	colour = texture(tex, uv).rgb;"
 		"}\n",
-	};
+	};*/
+
 
 	id = glCreateProgram();
 
-	if (!vertex_shader.InitFromSource(vertex_shader_source, true)) {
+	if (!vertex_shader.InitFromFile("stuff/basic_lighting.vertex", true)) {
 		cout << "Program failed due to vertex shader errors" << endl;
 		return false;
 	}
 	glAttachShader(id, vertex_shader.id);
 
-	if (!fragment_shader.InitFromSource(fragment_shader_source, false)) {
+	if (!fragment_shader.InitFromFile("stuff/basic_lighting.fragment", false)) {
 		cout << "Program failed due to fragment shader errors" << endl;
 		return false;
 	}
@@ -99,8 +100,13 @@ bool ShaderProgram::Init() {
 	// For now, use hardcoded program variables
 	attrib_position = glGetAttribLocation(id, "vertex_position");
 	attrib_uv = glGetAttribLocation(id, "vertex_uv");
+	attrib_normal = glGetAttribLocation(id, "vertex_normal");
+
+	uniform_m = glGetUniformLocation(id, "m");
+	uniform_v = glGetUniformLocation(id, "v");
 	uniform_mvp = glGetUniformLocation(id, "mvp");
 	uniform_tex = glGetUniformLocation(id, "tex");
+	uniform_light_position = glGetUniformLocation(id, "light_position");
 
 	return true;
 }
@@ -109,4 +115,4 @@ void ShaderProgram::Cleanup() {
 	glDeleteProgram(id);
 	id = 0;
 }
-}
+} // namespace spare

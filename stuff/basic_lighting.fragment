@@ -1,0 +1,36 @@
+#version 330 core
+
+in vec2 uv;
+in vec3 position_worldspace;
+in vec3 normal_cameraspace;
+in vec3 eyedirection_cameraspace;
+in vec3 lightdirection_cameraspace;
+
+out vec3 colour;
+
+uniform sampler2D tex;
+//uniform mat4 mv;
+uniform vec3 light_position;
+
+void main() {
+	vec3 light_colour = vec3(1, 1, 1);
+	float light_power = 50;
+
+	vec3 material_diffuse = texture(tex, uv).rgb;
+	vec3 material_ambient = vec3(0.1, 0.1, 0.1) * material_diffuse;
+	vec3 material_specular = vec3(0.3, 0.3, 0.3);
+
+	float distance = length(light_position - position_worldspace);
+	vec3 n = normalize(normal_cameraspace);
+	vec3 l = normalize(lightdirection_cameraspace);
+	float cos_theta = clamp(dot(n, l), 0, 1);
+
+	vec3 E = normalize(eyedirection_cameraspace);
+	vec3 R = reflect(-l, n);
+	float cos_alpha = clamp(dot(E, R), 0, 1);
+
+	colour =
+		material_ambient +
+		material_diffuse * light_colour * light_power * cos_theta / (distance * distance) +
+		material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+}

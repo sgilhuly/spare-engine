@@ -11,6 +11,7 @@
 
 #include "camera.h"
 #include "fps.h"
+#include "game_object.h"
 #include "shader_program.h"
 #include "texture.h"
 
@@ -227,20 +228,8 @@ bool Engine::OnInit() {
 	glBindVertexArray(vertex_array_id);
 
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
 	glClearColor(0.1f, 0.2f, 0.3f, 1);
-
-	glGenBuffers(1, &vertex_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &colour_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, colour_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &uv_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
 
 	//glGenBuffers(1, &ibo);
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -251,6 +240,9 @@ bool Engine::OnInit() {
 		return false;
 	}
 	if (!texture_dds.InitDds("stuff/uvtemplate.DDS")) {
+		return false;
+	}
+	if (!monkey.InitObj("stuff/monkey.obj")) {
 		return false;
 	}
 
@@ -279,27 +271,34 @@ void Engine::OnRender(float delta) {
 	if (show_quad) {
 		glUseProgram(program.id);
 
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 mvp = camera.projection * camera.view * model;
+		glm::mat4 mvp = camera.projection * camera.view * monkey.transform;
+		glm::vec3 light_position(5, -5, 2);
+		glUniformMatrix4fv(program.uniform_m, 1, GL_FALSE, &monkey.transform[0][0]);
+		glUniformMatrix4fv(program.uniform_v, 1, GL_FALSE, &camera.view[0][0]);
 		glUniformMatrix4fv(program.uniform_mvp, 1, GL_FALSE, &mvp[0][0]);
+		glUniform3f(program.uniform_light_position, light_position.x, light_position.y, light_position.z);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_bmp.id);
 		glUniform1i(program.uniform_tex, 0);
 
 		glEnableVertexAttribArray(program.attrib_position);
-		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, monkey.vertex_buffer);
 		glVertexAttribPointer(program.attrib_position, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glEnableVertexAttribArray(program.attrib_uv);
-		glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, monkey.uv_buffer);
 		glVertexAttribPointer(program.attrib_uv, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glEnableVertexAttribArray(program.attrib_normal);
+		glBindBuffer(GL_ARRAY_BUFFER, monkey.normal_buffer);
+		glVertexAttribPointer(program.attrib_normal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		//glEnableVertexAttribArray(program.attrib_uv);
 		//glBindBuffer(GL_ARRAY_BUFFER, colour_buffer);
 		//glVertexAttribPointer(program.attrib_uv, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
+		glDrawArrays(GL_TRIANGLES, 0, monkey.vertices.size());
 
 		glDisableVertexAttribArray(program.attrib_position);
 		glDisableVertexAttribArray(program.attrib_uv);

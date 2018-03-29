@@ -1,0 +1,32 @@
+#version 330 core
+
+in vec3 vertex_position;
+in vec2 vertex_uv;
+in vec3 vertex_normal;
+
+out vec2 uv;
+out vec3 position_worldspace;
+out vec3 normal_cameraspace;
+out vec3 eyedirection_cameraspace;
+out vec3 lightdirection_cameraspace;
+
+uniform mat4 mvp;
+uniform mat4 v;
+uniform mat4 m;
+uniform vec3 light_position;
+
+void main() {
+	gl_Position = mvp * vec4(vertex_position, 1);
+
+	position_worldspace = (m * vec4(vertex_position, 1)).xyz;
+
+	uv = vertex_uv;
+
+	normal_cameraspace = (v * m * vec4(vertex_normal, 0)).xyz;
+
+	vec3 position_cameraspace = (v * m * vec4(vertex_position, 1)).xyz;
+	eyedirection_cameraspace = vec3(0, 0, 0) - position_cameraspace;
+
+	vec3 lightposition_cameraspace = (v * vec4(light_position, 1)).xyz;
+	lightdirection_cameraspace = lightposition_cameraspace + eyedirection_cameraspace;
+}
