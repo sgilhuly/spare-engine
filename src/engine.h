@@ -17,7 +17,7 @@ public:
 	Engine(int width, int height);
 	int OnExecute();
 	bool OnInit();
-	void OnEvent(SDL_Event& event);
+	void OnEvent(const SDL_Event& event);
 	void OnLoop(float delta);
 	void OnRender(float delta);
 	void OnCleanup();
@@ -37,4 +37,4 @@ private:
 	bool show_quad = true;
 	GLuint ibo = 0;
 };
-} // namespace spare
+}  // namespace spare

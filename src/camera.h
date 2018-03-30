@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 
 namespace spare {
 class Camera {
@@ -19,4 +19,4 @@ public:
 	glm::mat4 projection;
 	glm::mat4 view;
 };
-} // namespace spare
+}  // namespace spare

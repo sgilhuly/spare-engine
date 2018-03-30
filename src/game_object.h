@@ -13,7 +13,6 @@ public:
 	GameObject();
 	bool InitObj(const std::string& objpath);
 	void OnLoop(float delta);
-	//void OnRender(float delta);
 
 	glm::mat4 transform;
 
@@ -24,4 +23,4 @@ public:
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 };
-} // namespace spare
+}  // namespace spare

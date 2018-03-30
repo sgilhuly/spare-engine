@@ -10,38 +10,31 @@
 using std::cout;
 using std::endl;
 
-void printShaderLog( GLuint shader )
-{
-	//Make sure name is shader
-	if( glIsShader( shader ) )
-	{
-		//Shader log length
+void printShaderLog(GLuint shader) {
+	// Make sure name is shader
+	if (glIsShader(shader)) {
+		// Shader log length
 		int infoLogLength = 0;
 		int maxLength = infoLogLength;
-		
-		//Get info string length
-		glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
-		
-		//Allocate string
-		char* infoLog = new char[ maxLength ];
-		
-		//Get info log
-		glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
-		if( infoLogLength > 0 )
-		{
-			//Print Log
+
+		// Get info string length
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// Allocate string
+		char* infoLog = new char[maxLength];
+
+		// Get info log
+		glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0) {
+			// Print Log
 			cout << infoLog << endl;
-		}
-		else
-		{
+		} else {
 			cout << "Nothing logged" << endl;
 		}
 
-		//Deallocate string
+		// Deallocate string
 		delete[] infoLog;
-	}
-	else
-	{
+	} else {
 		cout << "Name " << shader << " is not a shader" << endl;
 	}
 }
@@ -85,4 +78,4 @@ bool Shader::InitFromFile(const char* filepath, bool is_vertex_shader) {
 	const char* source_pointer = shader_source.c_str();
 	return InitFromSource(&source_pointer, is_vertex_shader);
 }
-} // namespace spare
+}  // namespace spare

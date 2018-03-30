@@ -22,8 +22,6 @@ void Camera::Init(int width, int height) {
 	far_clip = 100.0f;
 
 	projection = glm::perspective(glm::radians(fov), aspect_ratio, near_clip, far_clip);
-	OnLoop(0); // Call the loop function to set the view matrix
-	//view = glm::lookAt(glm::vec3(4,3,3), glm::vec3(0,0,0), glm::vec3(0,1,0));
 }
 
 void Camera::OnLoop(float delta) {
@@ -40,6 +38,6 @@ void Camera::OnLoop(float delta) {
 	float cam_y = sin(pitch) * camera_distance;
 	float cam_z = sin(rotation) * cos(pitch) * camera_distance;
 
-	view = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(0,0,0), glm::vec3(0,1,0));
+	view = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 }
-} // namespace spare
+}  // namespace spare

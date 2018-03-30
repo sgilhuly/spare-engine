@@ -9,38 +9,31 @@
 using std::cout;
 using std::endl;
 
-void printProgramLog( GLuint program )
-{
-	//Make sure name is shader
-	if( glIsProgram( program ) )
-	{
-		//Program log length
+void printProgramLog(GLuint program) {
+	// Make sure name is shader
+	if (glIsProgram(program)) {
+		// Program log length
 		int infoLogLength = 0;
 		int maxLength = infoLogLength;
-		
-		//Get info string length
-		glGetProgramiv( program, GL_INFO_LOG_LENGTH, &maxLength );
-		
-		//Allocate string
-		char* infoLog = new char[ maxLength ];
-		
-		//Get info log
-		glGetProgramInfoLog( program, maxLength, &infoLogLength, infoLog );
-		if( infoLogLength > 0 )
-		{
-			//Print Log
+
+		// Get info string length
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// Allocate string
+		char* infoLog = new char[maxLength];
+
+		// Get info log
+		glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0) {
+			// Print Log
 			cout << infoLog << endl;
-		}
-		else
-		{
+		} else {
 			cout << "Nothing logged" << endl;
 		}
-		
-		//Deallocate string
+
+		// Deallocate string
 		delete[] infoLog;
-	}
-	else
-	{
+	} else {
 		cout << "Name " << program << " is not a program" << endl;
 	}
 }
@@ -115,4 +108,4 @@ void ShaderProgram::Cleanup() {
 	glDeleteProgram(id);
 	id = 0;
 }
-} // namespace spare
+}  // namespace spare

@@ -26,4 +26,4 @@ public:
 	Shader vertex_shader;
 	Shader fragment_shader;
 };
-} // namespace spare
+}  // namespace spare
