@@ -6,7 +6,6 @@
 #include <SDL2/SDL_opengl.h>
 
 #include "camera.h"
-#include "fps.h"
 #include "game_object.h"
 #include "shader_program.h"
 #include "texture.h"
@@ -24,7 +23,6 @@ public:
 private:
 	bool running = true;
 	Camera camera;
-	FpsCounter fps;
 	SDL_Window* window = NULL;
 	SDL_GLContext context;
 	ShaderProgram program;

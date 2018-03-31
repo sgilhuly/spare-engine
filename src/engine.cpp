@@ -11,7 +11,6 @@
 #include <SDL2/SDL_opengl.h>
 
 #include "camera.h"
-#include "fps.h"
 #include "game_object.h"
 #include "shader_program.h"
 #include "texture.h"
@@ -43,6 +42,9 @@ int Engine::OnExecute() {
 	int last_time = SDL_GetTicks();
 	float delta = 0;
 
+	int ticks = 0;
+	float total_time = 0;
+
 	while (running) {
 		this_time = SDL_GetTicks();
 		delta = (this_time - last_time) / 1000.0f;
@@ -54,11 +56,15 @@ int Engine::OnExecute() {
 		OnLoop(delta);
 		OnRender(delta);
 
-		if(fps.update()) {
+		ticks++;
+		total_time += delta;
+		if (total_time >= 0.25f) {
 			char title[64];
-			snprintf(title, sizeof(title), "Spare Engine - %0.2f FPS", fps.getFps());
-
+			snprintf(title, sizeof(title), "Spare Engine - %0.2f FPS", ticks / total_time);
 			SDL_SetWindowTitle(window, title);
+
+			ticks = 0;
+			total_time = 0;
 		}
 	}
 
