@@ -128,7 +128,7 @@ bool Engine::OnInit() {
 	if (!texture_dds.InitDds("stuff/uvtemplate.DDS")) {
 		return false;
 	}
-	if (!monkey.InitObj("stuff/monkey2.obj")) {
+	if (!monkey.Init("stuff/monkey2.obj")) {
 		return false;
 	}
 
@@ -185,10 +185,13 @@ void Engine::OnRender(float delta) {
 		glBindBuffer(GL_ARRAY_BUFFER, monkey.normal_buffer);
 		glVertexAttribPointer(program.attrib_normal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glDrawArrays(GL_TRIANGLES, 0, monkey.vertices.size());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, monkey.element_buffer);
+
+		glDrawElements(GL_TRIANGLES, monkey.indices.size(), GL_UNSIGNED_SHORT, 0);
 
 		glDisableVertexAttribArray(program.attrib_position);
 		glDisableVertexAttribArray(program.attrib_uv);
+		glDisableVertexAttribArray(program.attrib_normal);
 		glUseProgram(0);
 	}
 

@@ -9,11 +9,10 @@ ASSIMP_HOME := $(HOME)/tmp/assimp-4.0.1
 GLM_HOME := $(HOME)/tmp/glm-0.9.9-a2
 LUA_HOME := $(HOME)/tmp/lua-5.3.4/src
 
-#INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(LUA_HOME) $(GLM_HOME)
 INC_DIRS := $(SRC_DIRS) $(ASSIMP_HOME)/include $(GLM_HOME) $(LUA_HOME)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-LINK_DIRS := $(ASSIMP_HOME)/lib
+LINK_DIRS := 
 LINK_FLAGS := $(addprefix -L,$(LINK_DIRS))
 
 LIB_FLAGS := -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lGL -lGLU -lglut -lGLEW -lassimp
