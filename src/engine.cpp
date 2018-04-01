@@ -122,15 +122,20 @@ bool Engine::OnInit() {
 	glClearColor(0.1f, 0.2f, 0.3f, 1);
 
 	camera.Init(width, height);
-	if (!texture_bmp.InitBmp("stuff/uvtemplate.bmp")) {
+	if (!texture_diffuse.InitDds("stuff/diffuse.DDS")) {
 		return false;
 	}
-	if (!texture_dds.InitDds("stuff/uvtemplate.DDS")) {
+	if (!texture_normal.InitBmp("stuff/normal.bmp")) {
 		return false;
 	}
-	if (!monkey.Init("stuff/monkey2.obj")) {
+	if (!texture_specular.InitDds("stuff/specular.DDS")) {
 		return false;
 	}
+	if (!monkey.Init("stuff/cylinder.obj")) {
+		return false;
+	}
+
+	options = glm::vec3(1, 1, 1);
 
 	return true;
 }
@@ -145,6 +150,18 @@ void Engine::OnEvent(const SDL_Event& event) {
 			switch (event.key.keysym.sym) {
 				case SDLK_ESCAPE:
 					running = false;
+					break;
+
+				case SDLK_1:
+					options.x = options.x > 0.5f ? 0 : 1;
+					break;
+
+				case SDLK_2:
+					options.y = options.y > 0.5f ? 0 : 1;
+					break;
+
+				case SDLK_3:
+					options.z = options.z > 0.5f ? 0 : 1;
 					break;
 			}
 			break;
@@ -163,15 +180,26 @@ void Engine::OnRender(float delta) {
 		glUseProgram(program.id);
 
 		glm::mat4 mvp = camera.projection * camera.view * monkey.transform;
-		glm::vec3 light_position(5, -5, 2);
+		glm::mat3 mv = glm::mat3(camera.view * monkey.transform);
+		glm::vec3 light_position(3, 1, 4);
 		glUniformMatrix4fv(program.uniform_m, 1, GL_FALSE, &monkey.transform[0][0]);
 		glUniformMatrix4fv(program.uniform_v, 1, GL_FALSE, &camera.view[0][0]);
+		glUniformMatrix3fv(program.uniform_mv, 1, GL_FALSE, &mv[0][0]);
 		glUniformMatrix4fv(program.uniform_mvp, 1, GL_FALSE, &mvp[0][0]);
 		glUniform3f(program.uniform_light_position, light_position.x, light_position.y, light_position.z);
+		glUniform3f(program.uniform_lighting_options, options.x, options.y, options.z);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_bmp.id);
-		glUniform1i(program.uniform_tex, 0);
+		glBindTexture(GL_TEXTURE_2D, texture_diffuse.id);
+		glUniform1i(program.uniform_tex_diffuse, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture_normal.id);
+		glUniform1i(program.uniform_tex_normal, 1);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, texture_specular.id);
+		glUniform1i(program.uniform_tex_specular, 2);
 
 		glEnableVertexAttribArray(program.attrib_position);
 		glBindBuffer(GL_ARRAY_BUFFER, monkey.vertex_buffer);
@@ -184,6 +212,14 @@ void Engine::OnRender(float delta) {
 		glEnableVertexAttribArray(program.attrib_normal);
 		glBindBuffer(GL_ARRAY_BUFFER, monkey.normal_buffer);
 		glVertexAttribPointer(program.attrib_normal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glEnableVertexAttribArray(program.attrib_tangent);
+		glBindBuffer(GL_ARRAY_BUFFER, monkey.tangent_buffer);
+		glVertexAttribPointer(program.attrib_tangent, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glEnableVertexAttribArray(program.attrib_bitangent);
+		glBindBuffer(GL_ARRAY_BUFFER, monkey.bitangent_buffer);
+		glVertexAttribPointer(program.attrib_bitangent, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, monkey.element_buffer);
 
@@ -200,8 +236,6 @@ void Engine::OnRender(float delta) {
 
 void Engine::OnCleanup() {
 	program.Cleanup();
-	texture_bmp.Cleanup();
-	texture_dds.Cleanup();
 	SDL_DestroyWindow(window);
 	window = NULL;
 	SDL_Quit();

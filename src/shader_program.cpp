@@ -43,30 +43,6 @@ ShaderProgram::ShaderProgram() {
 }
 
 bool ShaderProgram::Init() {
-	// For now, hardcode some simple shaders
-	/*const GLchar* vertex_shader_source[] = {
-		"#version 330 core\n"
-		"in vec3 vertex_position;\n"
-		"in vec2 vertex_uv;\n"
-		"out vec2 uv;\n"
-		"uniform mat4 mvp;\n"
-		"void main() {\n"
-		"	gl_Position = mvp * vec4(vertex_position, 1);\n"
-		"	uv = vertex_uv;\n"
-		"}\n",
-	};
-
-	const GLchar* fragment_shader_source[] = {
-		"#version 330 core\n"
-		"in vec2 uv;\n"
-		"out vec3 colour;\n"
-		"uniform sampler2D tex;\n"
-		"void main() {\n"
-		"	colour = texture(tex, uv).rgb;"
-		"}\n",
-	};*/
-
-
 	id = glCreateProgram();
 
 	if (!vertex_shader.InitFromFile("stuff/basic_lighting.vertex", true)) {
@@ -94,12 +70,18 @@ bool ShaderProgram::Init() {
 	attrib_position = glGetAttribLocation(id, "vertex_position");
 	attrib_uv = glGetAttribLocation(id, "vertex_uv");
 	attrib_normal = glGetAttribLocation(id, "vertex_normal");
+	attrib_tangent = glGetAttribLocation(id, "vertex_tangent");
+	attrib_bitangent = glGetAttribLocation(id, "vertex_bitangent");
 
 	uniform_m = glGetUniformLocation(id, "m");
 	uniform_v = glGetUniformLocation(id, "v");
+	uniform_mv = glGetUniformLocation(id, "mv");
 	uniform_mvp = glGetUniformLocation(id, "mvp");
-	uniform_tex = glGetUniformLocation(id, "tex");
+	uniform_tex_diffuse = glGetUniformLocation(id, "tex_diffuse");
+	uniform_tex_normal = glGetUniformLocation(id, "tex_normal");
+	uniform_tex_specular = glGetUniformLocation(id, "tex_specular");
 	uniform_light_position = glGetUniformLocation(id, "light_position");
+	uniform_lighting_options = glGetUniformLocation(id, "lighting_options");
 
 	return true;
 }

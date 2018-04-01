@@ -20,13 +20,15 @@ using std::endl;
 
 bool loadAssImp(
 		const std::string& path,
-		std::vector<uint16_t>& indices,     // NOLINT(runtime/references)
-		std::vector<glm::vec3>& vertices,   // NOLINT(runtime/references)
-		std::vector<glm::vec2>& uvs,        // NOLINT(runtime/references)
-		std::vector<glm::vec3>& normals) {  // NOLINT(runtime/references)
+		std::vector<uint16_t>& indices,        // NOLINT(runtime/references)
+		std::vector<glm::vec3>& vertices,      // NOLINT(runtime/references)
+		std::vector<glm::vec2>& uvs,           // NOLINT(runtime/references)
+		std::vector<glm::vec3>& normals,       // NOLINT(runtime/references)
+		std::vector<glm::vec3>& tangents,      // NOLINT(runtime/references)
+		std::vector<glm::vec3>& bitangents) {  // NOLINT(runtime/references)
 	Assimp::Importer importer;
 
-	unsigned int flags = aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
+	unsigned int flags = aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace;
 	const aiScene* scene = importer.ReadFile(path, flags);
 	if (!scene) {
 		cout << importer.GetErrorString();
@@ -57,6 +59,20 @@ bool loadAssImp(
 		normals.push_back(glm::vec3(n.x, n.y, n.z));
 	}
 
+	// Fill vertices tangents
+	tangents.reserve(mesh->mNumVertices);
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+		aiVector3D n = mesh->mTangents[i];
+		tangents.push_back(glm::vec3(n.x, n.y, n.z));
+	}
+
+	// Fill vertices bitangents
+	bitangents.reserve(mesh->mNumVertices);
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+		aiVector3D n = mesh->mBitangents[i];
+		bitangents.push_back(glm::vec3(n.x, n.y, n.z));
+	}
+
 	// Fill face indices
 	indices.reserve(3 * mesh->mNumFaces);
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
@@ -76,10 +92,12 @@ GameObject::GameObject() {
 }
 
 bool GameObject::Init(const std::string& filepath) {
-	if (!loadAssImp(filepath, indices, vertices, uvs, normals)) {
+	if (!loadAssImp(filepath, indices, vertices, uvs, normals, tangents, bitangents)) {
 		cout << "Failed to load " << filepath << endl;
 		return false;
 	}
+
+	// computeTangentBasis(vertices, uvs, normals, tangents, bitangents);
 
 	glGenBuffers(1, &vertex_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
@@ -93,6 +111,20 @@ bool GameObject::Init(const std::string& filepath) {
 	glBufferData(GL_ARRAY_BUFFER,
 		uvs.size() * sizeof(decltype(uvs)::value_type),
 		&uvs[0],
+		GL_STATIC_DRAW);
+
+	glGenBuffers(1, &tangent_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, tangent_buffer);
+	glBufferData(GL_ARRAY_BUFFER,
+		tangents.size() * sizeof(decltype(tangents)::value_type),
+		&tangents[0],
+		GL_STATIC_DRAW);
+
+	glGenBuffers(1, &bitangent_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, bitangent_buffer);
+	glBufferData(GL_ARRAY_BUFFER,
+		bitangents.size() * sizeof(decltype(bitangents)::value_type),
+		&bitangents[0],
 		GL_STATIC_DRAW);
 
 	glGenBuffers(1, &normal_buffer);

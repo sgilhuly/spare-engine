@@ -16,12 +16,18 @@ public:
 	GLint attrib_position = -1;
 	GLint attrib_uv = -1;
 	GLint attrib_normal = -1;
+	GLint attrib_tangent = -1;
+	GLint attrib_bitangent = -1;
 
 	GLint uniform_m = -1;
 	GLint uniform_v = -1;
+	GLint uniform_mv = -1;
 	GLint uniform_mvp = -1;
-	GLint uniform_tex = -1;
+	GLint uniform_tex_diffuse = -1;
+	GLint uniform_tex_normal = -1;
+	GLint uniform_tex_specular = -1;
 	GLint uniform_light_position = -1;
+	GLint uniform_lighting_options = -1;
 
 	Shader vertex_shader;
 	Shader fragment_shader;

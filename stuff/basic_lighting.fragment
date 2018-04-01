@@ -2,35 +2,59 @@
 
 in vec2 uv;
 in vec3 position_worldspace;
-in vec3 normal_cameraspace;
 in vec3 eyedirection_cameraspace;
 in vec3 lightdirection_cameraspace;
+in vec3 lightdirection_tangentspace;
+in vec3 eyedirection_tangentspace;
 
 out vec3 colour;
 
-uniform sampler2D tex;
-//uniform mat4 mv;
+uniform sampler2D tex_diffuse;
+uniform sampler2D tex_normal;
+uniform sampler2D tex_specular;
+uniform mat4 m;
+uniform mat4 v;
+uniform mat3 mv;
 uniform vec3 light_position;
+uniform vec3 lighting_options;
 
 void main() {
 	vec3 light_colour = vec3(1, 1, 1);
 	float light_power = 50;
 
-	vec3 material_diffuse = texture(tex, uv).rgb;
-	vec3 material_ambient = vec3(0.1, 0.1, 0.1) * material_diffuse;
-	vec3 material_specular = vec3(0.3, 0.3, 0.3);
+	vec3 material_diffuse = texture(tex_diffuse, uv).rgb;
+	vec3 material_ambient = vec3(0.2, 0.2, 0.2) * material_diffuse;
+	vec3 material_specular = texture(tex_specular, uv).rgb * 0.3;
+
+	vec3 normal_tangentspace = normalize(texture(tex_normal, uv).rgb * 2 - 1);
 
 	float distance = length(light_position - position_worldspace);
-	vec3 n = normalize(normal_cameraspace);
-	vec3 l = normalize(lightdirection_cameraspace);
+	vec3 n = normal_tangentspace;
+	vec3 l = normalize(lightdirection_tangentspace);
 	float cos_theta = clamp(dot(n, l), 0, 1);
 
-	vec3 E = normalize(eyedirection_cameraspace);
+	vec3 E = normalize(eyedirection_tangentspace);
 	vec3 R = reflect(-l, n);
 	float cos_alpha = clamp(dot(E, R), 0, 1);
 
-	colour =
-		material_ambient +
-		material_diffuse * light_colour * light_power * cos_theta / (distance * distance) +
-		material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+	// colour =
+	// 	material_ambient +
+	// 	material_diffuse * light_colour * light_power * cos_theta / (distance * distance) +
+	// 	material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+
+	colour = vec3(0, 0, 0);
+	if (lighting_options.x > 0.5) {
+		colour += material_ambient;
+	}
+	if (lighting_options.y > 0.5) {
+		colour += material_diffuse * light_colour * light_power * cos_theta / (distance * distance);
+	}
+	if (lighting_options.z > 0.5) {
+		colour += material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+	}
+	if (lighting_options.x < 0.5 && lighting_options.y < 0.5 && lighting_options.z < 0.5) {
+		colour = texture(tex_diffuse, uv).rgb;
+	}
+
+	// colour = material_diffuse;
 }

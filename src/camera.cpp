@@ -34,9 +34,9 @@ void Camera::OnLoop(float delta) {
 	pitch += y * mouse_y_speed * delta;
 	pitch = std::fmin(std::fmax(pitch, -pi / 3), pi / 3);
 
-	float cam_x = cos(rotation) * cos(pitch) * camera_distance;
-	float cam_y = sin(pitch) * camera_distance;
-	float cam_z = sin(rotation) * cos(pitch) * camera_distance;
+	float cam_x = 2 * cos(rotation) * cos(pitch) * camera_distance;
+	float cam_y = 2 * sin(pitch) * camera_distance;
+	float cam_z = 2 * sin(rotation) * cos(pitch) * camera_distance;
 
 	view = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 }

@@ -26,9 +26,11 @@ private:
 	SDL_Window* window = NULL;
 	SDL_GLContext context;
 	ShaderProgram program;
-	Texture texture_bmp;
-	Texture texture_dds;
+	Texture texture_diffuse;
+	Texture texture_normal;
+	Texture texture_specular;
 	GameObject monkey;
+	glm::vec3 options;
 
 	int width;
 	int height;
