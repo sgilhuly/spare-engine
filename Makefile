@@ -12,10 +12,10 @@ LUA_HOME := $(HOME)/tmp/lua-5.3.4/src
 INC_DIRS := $(SRC_DIRS) $(ASSIMP_HOME)/include $(GLM_HOME) $(LUA_HOME)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-LINK_DIRS := 
+LINK_DIRS :=
 LINK_FLAGS := $(addprefix -L,$(LINK_DIRS))
 
-LIB_FLAGS := -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lGL -lGLU -lglut -lGLEW -lassimp
+LIB_FLAGS := -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lGL -lGLEW -lassimp
 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++11 $(LIB_FLAGS)
 LDFLAGS := $(LINK_FLAGS) `sdl2-config --libs` $(LIB_FLAGS)

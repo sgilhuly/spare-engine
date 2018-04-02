@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_opengl.h>
 
 #include "camera.h"
@@ -79,6 +80,12 @@ bool Engine::OnInit() {
 		return false;
 	}
 
+	int img_flags = IMG_INIT_PNG;
+	if (!(IMG_Init(img_flags) & img_flags)) {
+		cout << "Could not initialize SDL_image: " << IMG_GetError() << endl;
+		return false;
+	}
+
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
@@ -122,18 +129,26 @@ bool Engine::OnInit() {
 	glClearColor(0.1f, 0.2f, 0.3f, 1);
 
 	camera.Init(width, height);
-	if (!texture_diffuse.InitDds("stuff/diffuse.DDS")) {
+
+	if (!texture_diffuse.Init("stuff/hp_rock_2.png")) {
 		return false;
 	}
-	if (!texture_normal.InitBmp("stuff/normal.bmp")) {
+	if (!texture_normal.Init("stuff/hp_rock_2_norm.png")) {
 		return false;
 	}
-	if (!texture_specular.InitDds("stuff/specular.DDS")) {
+	if (!texture_specular.Init("stuff/hp_rock_2_spec.png")) {
 		return false;
 	}
-	if (!monkey.Init("stuff/cylinder.obj")) {
+
+	if (!mesh_cylinder.Init("stuff/cylinder.obj")) {
 		return false;
 	}
+
+	mat_hp_rock_2.InitDNS(&texture_diffuse, &texture_normal, &texture_specular);
+
+	obj.material = &mat_hp_rock_2;
+	obj.mesh = &mesh_cylinder;
+	obj.shader = &program;
 
 	options = glm::vec3(1, 1, 1);
 
@@ -170,7 +185,7 @@ void Engine::OnEvent(const SDL_Event& event) {
 
 void Engine::OnLoop(float delta) {
 	camera.OnLoop(delta);
-	monkey.OnLoop(delta);
+	obj.OnLoop(delta);
 }
 
 void Engine::OnRender(float delta) {
@@ -179,10 +194,10 @@ void Engine::OnRender(float delta) {
 	if (show_quad) {
 		glUseProgram(program.id);
 
-		glm::mat4 mvp = camera.projection * camera.view * monkey.transform;
-		glm::mat3 mv = glm::mat3(camera.view * monkey.transform);
+		glm::mat4 mvp = camera.projection * camera.view * obj.transform;
+		glm::mat3 mv = glm::mat3(camera.view * obj.transform);
 		glm::vec3 light_position(3, 1, 4);
-		glUniformMatrix4fv(program.uniform_m, 1, GL_FALSE, &monkey.transform[0][0]);
+		glUniformMatrix4fv(program.uniform_m, 1, GL_FALSE, &obj.transform[0][0]);
 		glUniformMatrix4fv(program.uniform_v, 1, GL_FALSE, &camera.view[0][0]);
 		glUniformMatrix3fv(program.uniform_mv, 1, GL_FALSE, &mv[0][0]);
 		glUniformMatrix4fv(program.uniform_mvp, 1, GL_FALSE, &mvp[0][0]);
@@ -190,40 +205,40 @@ void Engine::OnRender(float delta) {
 		glUniform3f(program.uniform_lighting_options, options.x, options.y, options.z);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_diffuse.id);
+		glBindTexture(GL_TEXTURE_2D, mat_hp_rock_2.diffuse->id);
 		glUniform1i(program.uniform_tex_diffuse, 0);
 
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture_normal.id);
+		glBindTexture(GL_TEXTURE_2D, mat_hp_rock_2.normal->id);
 		glUniform1i(program.uniform_tex_normal, 1);
 
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, texture_specular.id);
+		glBindTexture(GL_TEXTURE_2D, mat_hp_rock_2.specular->id);
 		glUniform1i(program.uniform_tex_specular, 2);
 
 		glEnableVertexAttribArray(program.attrib_position);
-		glBindBuffer(GL_ARRAY_BUFFER, monkey.vertex_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->vertex_buffer);
 		glVertexAttribPointer(program.attrib_position, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glEnableVertexAttribArray(program.attrib_uv);
-		glBindBuffer(GL_ARRAY_BUFFER, monkey.uv_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->uv_buffer);
 		glVertexAttribPointer(program.attrib_uv, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glEnableVertexAttribArray(program.attrib_normal);
-		glBindBuffer(GL_ARRAY_BUFFER, monkey.normal_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->normal_buffer);
 		glVertexAttribPointer(program.attrib_normal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glEnableVertexAttribArray(program.attrib_tangent);
-		glBindBuffer(GL_ARRAY_BUFFER, monkey.tangent_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->tangent_buffer);
 		glVertexAttribPointer(program.attrib_tangent, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glEnableVertexAttribArray(program.attrib_bitangent);
-		glBindBuffer(GL_ARRAY_BUFFER, monkey.bitangent_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->bitangent_buffer);
 		glVertexAttribPointer(program.attrib_bitangent, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, monkey.element_buffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.mesh->element_buffer);
 
-		glDrawElements(GL_TRIANGLES, monkey.indices.size(), GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, obj.mesh->indices.size(), GL_UNSIGNED_SHORT, 0);
 
 		glDisableVertexAttribArray(program.attrib_position);
 		glDisableVertexAttribArray(program.attrib_uv);

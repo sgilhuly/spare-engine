@@ -20,7 +20,7 @@ uniform vec3 lighting_options;
 
 void main() {
 	vec3 light_colour = vec3(1, 1, 1);
-	float light_power = 50;
+	float light_power = 30;
 
 	vec3 material_diffuse = texture(tex_diffuse, uv).rgb;
 	vec3 material_ambient = vec3(0.2, 0.2, 0.2) * material_diffuse;
@@ -53,7 +53,7 @@ void main() {
 		colour += material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
 	}
 	if (lighting_options.x < 0.5 && lighting_options.y < 0.5 && lighting_options.z < 0.5) {
-		colour = texture(tex_diffuse, uv).rgb;
+		colour = texture(tex_normal, uv).rgb;
 	}
 
 	// colour = material_diffuse;

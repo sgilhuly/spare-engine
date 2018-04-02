@@ -20,6 +20,7 @@ public:
 	void OnLoop(float delta);
 	void OnRender(float delta);
 	void OnCleanup();
+
 private:
 	bool running = true;
 	Camera camera;
@@ -29,7 +30,9 @@ private:
 	Texture texture_diffuse;
 	Texture texture_normal;
 	Texture texture_specular;
-	GameObject monkey;
+	Mesh mesh_cylinder;
+	Material mat_hp_rock_2;
+	GameObject obj;
 	glm::vec3 options;
 
 	int width;
