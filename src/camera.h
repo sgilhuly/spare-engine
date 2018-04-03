@@ -1,6 +1,8 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
+
+#include "game_object.h"
 
 namespace spare {
 class Camera {
@@ -8,6 +10,7 @@ public:
 	Camera();
 	void Init(int width, int height);
 	void OnLoop(float delta);
+	void DrawObject(const GameObject& obj, const glm::vec3& options);
 
 	float fov;
 	float aspect_ratio;
@@ -18,5 +21,6 @@ public:
 
 	glm::mat4 projection;
 	glm::mat4 view;
+	glm::vec3 light_position;
 };
 }  // namespace spare

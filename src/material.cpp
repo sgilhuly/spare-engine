@@ -17,4 +17,4 @@ void Material::InitDNS(Texture* diffuse, Texture* normal, Texture* specular) {
 	this->normal = normal;
 	this->specular = specular;
 }
-}
+}  // namespace spare

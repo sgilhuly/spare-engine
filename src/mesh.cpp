@@ -143,4 +143,4 @@ bool Mesh::Init(const std::string& filepath) {
 
 	return true;
 }
-}
+}  // namespace spare

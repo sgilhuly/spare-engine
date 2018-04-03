@@ -23,7 +23,7 @@ void main() {
 	float light_power = 30;
 
 	vec3 material_diffuse = texture(tex_diffuse, uv).rgb;
-	vec3 material_ambient = vec3(0.2, 0.2, 0.2) * material_diffuse;
+	vec3 material_ambient = material_diffuse;
 	vec3 material_specular = texture(tex_specular, uv).rgb * 0.3;
 
 	vec3 normal_tangentspace = normalize(texture(tex_normal, uv).rgb * 2 - 1);
@@ -44,13 +44,13 @@ void main() {
 
 	colour = vec3(0, 0, 0);
 	if (lighting_options.x > 0.5) {
-		colour += material_ambient;
+		colour += 0.1 * material_ambient;
 	}
 	if (lighting_options.y > 0.5) {
-		colour += material_diffuse * light_colour * light_power * cos_theta / (distance * distance);
+		colour += 1.0 * material_diffuse * light_colour * light_power * cos_theta / (distance * distance);
 	}
 	if (lighting_options.z > 0.5) {
-		colour += material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+		colour += 1.0 * material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
 	}
 	if (lighting_options.x < 0.5 && lighting_options.y < 0.5 && lighting_options.z < 0.5) {
 		colour = texture(tex_normal, uv).rgb;

@@ -32,12 +32,10 @@ private:
 	Texture texture_specular;
 	Mesh mesh_cylinder;
 	Material mat_hp_rock_2;
-	GameObject obj;
+	std::vector<GameObject> objects;
 	glm::vec3 options;
 
 	int width;
 	int height;
-	bool show_quad = true;
-	GLuint ibo = 0;
 };
 }  // namespace spare

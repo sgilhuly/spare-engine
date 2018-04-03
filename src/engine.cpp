@@ -146,9 +146,16 @@ bool Engine::OnInit() {
 
 	mat_hp_rock_2.InitDNS(&texture_diffuse, &texture_normal, &texture_specular);
 
-	obj.material = &mat_hp_rock_2;
-	obj.mesh = &mesh_cylinder;
-	obj.shader = &program;
+	for (int i = 0; i < 4; i++) {
+		int x = i % 2;
+		int z = i / 2;
+		GameObject obj;
+		obj.transform = glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2));
+		obj.material = &mat_hp_rock_2;
+		obj.mesh = &mesh_cylinder;
+		obj.shader = &program;
+		objects.push_back(obj);
+	}
 
 	options = glm::vec3(1, 1, 1);
 
@@ -185,65 +192,16 @@ void Engine::OnEvent(const SDL_Event& event) {
 
 void Engine::OnLoop(float delta) {
 	camera.OnLoop(delta);
-	obj.OnLoop(delta);
+	for (auto &obj : objects) {
+		obj.OnLoop(delta);
+	}
 }
 
 void Engine::OnRender(float delta) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (show_quad) {
-		glUseProgram(program.id);
-
-		glm::mat4 mvp = camera.projection * camera.view * obj.transform;
-		glm::mat3 mv = glm::mat3(camera.view * obj.transform);
-		glm::vec3 light_position(3, 1, 4);
-		glUniformMatrix4fv(program.uniform_m, 1, GL_FALSE, &obj.transform[0][0]);
-		glUniformMatrix4fv(program.uniform_v, 1, GL_FALSE, &camera.view[0][0]);
-		glUniformMatrix3fv(program.uniform_mv, 1, GL_FALSE, &mv[0][0]);
-		glUniformMatrix4fv(program.uniform_mvp, 1, GL_FALSE, &mvp[0][0]);
-		glUniform3f(program.uniform_light_position, light_position.x, light_position.y, light_position.z);
-		glUniform3f(program.uniform_lighting_options, options.x, options.y, options.z);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mat_hp_rock_2.diffuse->id);
-		glUniform1i(program.uniform_tex_diffuse, 0);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mat_hp_rock_2.normal->id);
-		glUniform1i(program.uniform_tex_normal, 1);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, mat_hp_rock_2.specular->id);
-		glUniform1i(program.uniform_tex_specular, 2);
-
-		glEnableVertexAttribArray(program.attrib_position);
-		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->vertex_buffer);
-		glVertexAttribPointer(program.attrib_position, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glEnableVertexAttribArray(program.attrib_uv);
-		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->uv_buffer);
-		glVertexAttribPointer(program.attrib_uv, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glEnableVertexAttribArray(program.attrib_normal);
-		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->normal_buffer);
-		glVertexAttribPointer(program.attrib_normal, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glEnableVertexAttribArray(program.attrib_tangent);
-		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->tangent_buffer);
-		glVertexAttribPointer(program.attrib_tangent, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glEnableVertexAttribArray(program.attrib_bitangent);
-		glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->bitangent_buffer);
-		glVertexAttribPointer(program.attrib_bitangent, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.mesh->element_buffer);
-
-		glDrawElements(GL_TRIANGLES, obj.mesh->indices.size(), GL_UNSIGNED_SHORT, 0);
-
-		glDisableVertexAttribArray(program.attrib_position);
-		glDisableVertexAttribArray(program.attrib_uv);
-		glDisableVertexAttribArray(program.attrib_normal);
-		glUseProgram(0);
+	for (auto &obj : objects) {
+		camera.DrawObject(obj, options);
 	}
 
 	SDL_GL_SwapWindow(window);
