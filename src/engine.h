@@ -7,8 +7,7 @@
 
 #include "camera.h"
 #include "game_object.h"
-#include "shader_program.h"
-#include "texture.h"
+#include "resource_loader.h"
 
 namespace spare {
 class Engine {
@@ -24,14 +23,9 @@ public:
 private:
 	bool running = true;
 	Camera camera;
+	ResourceLoader resources;
 	SDL_Window* window = NULL;
 	SDL_GLContext context;
-	ShaderProgram program;
-	Texture texture_diffuse;
-	Texture texture_normal;
-	Texture texture_specular;
-	Mesh mesh_cylinder;
-	Material mat_hp_rock_2;
 	std::vector<GameObject> objects;
 	glm::vec3 options;
 

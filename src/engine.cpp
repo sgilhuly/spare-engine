@@ -13,8 +13,7 @@
 
 #include "camera.h"
 #include "game_object.h"
-#include "shader_program.h"
-#include "texture.h"
+#include "resource_loader.h"
 
 /*extern "C" {
   static int l_cppfunction(lua_State *L) {
@@ -116,10 +115,6 @@ bool Engine::OnInit() {
 		cout << "Warning: Unable to set VSync: " << SDL_GetError() << endl;
 	}
 
-	if (!program.Init()) {
-		return false;
-	}
-
 	GLuint vertex_array_id;
 	glGenVertexArrays(1, &vertex_array_id);
 	glBindVertexArray(vertex_array_id);
@@ -130,7 +125,7 @@ bool Engine::OnInit() {
 
 	camera.Init(width, height);
 
-	if (!texture_diffuse.Init("stuff/hp_rock_2.png")) {
+	/*if (!texture_diffuse.Init("stuff/hp_rock_2.png")) {
 		return false;
 	}
 	if (!texture_normal.Init("stuff/hp_rock_2_norm.png")) {
@@ -144,16 +139,19 @@ bool Engine::OnInit() {
 		return false;
 	}
 
-	mat_hp_rock_2.InitDNS(&texture_diffuse, &texture_normal, &texture_specular);
+	mat_hp_rock_2.InitDNS(&texture_diffuse, &texture_normal, &texture_specular);*/
 
 	for (int i = 0; i < 4; i++) {
 		int x = i % 2;
 		int z = i / 2;
 		GameObject obj;
 		obj.transform = glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2));
-		obj.material = &mat_hp_rock_2;
-		obj.mesh = &mesh_cylinder;
-		obj.shader = &program;
+		obj.material = resources.GetMaterial("stuff/hp_rock_2");
+		obj.mesh = resources.GetMesh("stuff/cylinder.obj");
+		obj.shader = resources.GetShaderProgram("stuff/basic_lighting");
+		// obj.material = &mat_hp_rock_2;
+		// obj.mesh = &mesh_cylinder;
+		// obj.shader = &program;
 		objects.push_back(obj);
 	}
 
@@ -208,7 +206,6 @@ void Engine::OnRender(float delta) {
 }
 
 void Engine::OnCleanup() {
-	program.Cleanup();
 	SDL_DestroyWindow(window);
 	window = NULL;
 	SDL_Quit();

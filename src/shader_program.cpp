@@ -1,6 +1,7 @@
 #include "shader_program.h"
 
 #include <iostream>
+#include <string>
 
 #include <GL/glew.h>
 
@@ -42,16 +43,16 @@ namespace spare {
 ShaderProgram::ShaderProgram() {
 }
 
-bool ShaderProgram::Init() {
+bool ShaderProgram::Init(const std::string& name) {
 	id = glCreateProgram();
 
-	if (!vertex_shader.InitFromFile("stuff/basic_lighting.vertex", true)) {
+	if (!vertex_shader.InitFromFile(name + ".vertex", true)) {
 		cout << "Program failed due to vertex shader errors" << endl;
 		return false;
 	}
 	glAttachShader(id, vertex_shader.id);
 
-	if (!fragment_shader.InitFromFile("stuff/basic_lighting.fragment", false)) {
+	if (!fragment_shader.InitFromFile(name + ".fragment", false)) {
 		cout << "Program failed due to fragment shader errors" << endl;
 		return false;
 	}

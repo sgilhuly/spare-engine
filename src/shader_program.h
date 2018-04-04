@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <GL/glew.h>
 
 #include "shader.h"
@@ -8,7 +10,7 @@ namespace spare {
 class ShaderProgram {
 public:
 	ShaderProgram();
-	bool Init();
+	bool Init(const std::string& name);
 	void Cleanup();
 
 	GLuint id = 0;

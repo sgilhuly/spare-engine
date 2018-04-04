@@ -62,7 +62,7 @@ bool Shader::InitFromSource(const char* shader_source[], bool is_vertex_shader) 
 	return true;
 }
 
-bool Shader::InitFromFile(const char* filepath, bool is_vertex_shader) {
+bool Shader::InitFromFile(const std::string& filepath, bool is_vertex_shader) {
 	std::string shader_source;
 	std::ifstream shader_stream(filepath, std::ios::in);
 	if (shader_stream.is_open()) {
