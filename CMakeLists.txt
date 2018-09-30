@@ -26,25 +26,25 @@ include_directories(${assimp_INCLUDE_DIRS})
 
 # Source files for project
 set(SOURCE_FILES
-    src/camera.cpp
-    src/camera.h
-    src/engine.cpp
-    src/engine.h
-    src/game_object.cpp
-    src/game_object.h
-    src/main.cpp
-    src/material.cpp
-    src/material.h
-    src/mesh.cpp
-    src/mesh.h
-    src/resource_loader.cpp
-    src/resource_loader.h
-    src/shader.cpp
-    src/shader.h
-    src/shader_program.cpp
-    src/shader_program.h
-    src/texture.cpp
-    src/texture.h)
+    src/spare/camera.cc
+    src/spare/camera.h
+    src/spare/engine.cc
+    src/spare/engine.h
+    src/spare/game_object.cc
+    src/spare/game_object.h
+    src/spare/main.cc
+    src/spare/material.cc
+    src/spare/material.h
+    src/spare/mesh.cc
+    src/spare/mesh.h
+    src/spare/resource_loader.cc
+    src/spare/resource_loader.h
+    src/spare/shader.cc
+    src/spare/shader.h
+    src/spare/shader_program.cc
+    src/spare/shader_program.h
+    src/spare/texture.cc
+    src/spare/texture.h)
 
 # Includes for project
 # include_directories(src)
