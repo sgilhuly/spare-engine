@@ -1,13 +1,12 @@
 #pragma once
 
-#include <cstdint>
-#include <string>
-#include <vector>
+class GameObject;  // need to forward declare for circular dependancy
 
-#include <GL/glew.h>
+#include <map>
+
 #include <glm/glm.hpp>
-#include <SDL2/SDL.h>
 
+// #include "component.h"
 #include "material.h"
 #include "mesh.h"
 #include "shader_program.h"
@@ -23,5 +22,7 @@ public:
 	ShaderProgram* shader;
 
 	glm::mat4 transform;
+private:
+	// std::map<std::string, Component*> components;
 };
 }  // namespace spare

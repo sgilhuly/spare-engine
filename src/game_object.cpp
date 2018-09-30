@@ -1,19 +1,7 @@
 #include "game_object.h"
 
-#include <cstdint>
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <string>
-#include <vector>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <SDL2/SDL.h>
 
 #include "material.h"
 #include "mesh.h"
@@ -25,6 +13,6 @@ GameObject::GameObject() {
 }
 
 void GameObject::OnLoop(float delta) {
-	// transform = glm::rotate(transform, delta, glm::vec3(0, 1, 0));
+	transform = glm::rotate(transform, delta, glm::vec3(0, 1, 0));
 }
 }  // namespace spare
