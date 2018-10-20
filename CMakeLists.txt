@@ -3,28 +3,29 @@ set (CMAKE_CXX_STANDARD 11)
 
 project(spare-engine)
 
-# include our module finders
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 # Temporary files (like object files) created while compiling projects.
 set(tmp_dir ${CMAKE_BINARY_DIR}/obj)
 
-set(dependencies_root "${CMAKE_CURRENT_SOURCE_DIR}/dependencies")
-
-# Include assimp
-# set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "")
-# add_subdirectory("${dependencies_flatbuffers_dir}" ${tmp_dir}/flatbuffers)
-
-find_package(GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIR})
-
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
-
 find_package(assimp REQUIRED)
-include_directories(${assimp_INCLUDE_DIRS})
+find_package(GLEW REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 
-# Source files for project
+include_directories(${ASSIMP_INCLUDE_DIRS})
+include_directories(${GLEW_INCLUDE_DIRS})
+include_directories(${OPENGL_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIRS})
+include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
+
+include_directories(${PROJECT_SOURCE_DIR}/dependencies/glm)
+
+# Remove a trailing space that causes linking errors.
+string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
+
+# Source files for the project.
 set(SOURCE_FILES
     src/spare/camera.cc
     src/spare/camera.h
@@ -72,10 +73,11 @@ set(SOURCE_FILES
 # include_directories(${dependencies_vectorial_dir}/include)
 
 # include_directories(${PROJECT_SOURCE_DIR}/dependencies/assimp/include)
-include_directories(${PROJECT_SOURCE_DIR}/dependencies/glm)
 
 add_executable(spare-engine ${SOURCE_FILES})
 target_link_libraries(spare-engine
-    ${GLEW_LIBRARY}
-    ${SDL2_LIBRARY}
-    ${assimp_LIBRARIES})
+    ${ASSIMP_LIBRARIES}
+    ${GLEW_LIBRARIES}
+    ${OPENGL_LIBRARY}
+    ${SDL2_LIBRARIES}
+    ${SDL2_IMAGE_LIBRARIES})
