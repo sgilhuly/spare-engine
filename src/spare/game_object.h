@@ -1,28 +1,28 @@
 #pragma once
 
-class GameObject;  // need to forward declare for circular dependancy
+// class GameObject;  // need to forward declare for circular dependancy
 
 #include <map>
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 
-// #include "component.h"
-#include "material.h"
-#include "mesh.h"
-#include "shader_program.h"
+#include "spare/material.h"
+#include "spare/mesh.h"
+#include "spare/shader_program.h"
 
 namespace spare {
 class GameObject {
-public:
-	GameObject();
-	void OnLoop(float delta);
+ public:
+  GameObject();
+  void OnLoop(float delta);
 
-	Material* material;
-	Mesh* mesh;
-	ShaderProgram* shader;
+  Material *material;
+  Mesh *mesh;
+  ShaderProgram *shader;
 
-	glm::mat4 transform;
-private:
-	// std::map<std::string, Component*> components;
+  glm::mat4 transform;
+
+ private:
+  // std::map<std::string, Component*> components;
 };
 }  // namespace spare

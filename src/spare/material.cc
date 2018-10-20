@@ -1,20 +1,19 @@
-#include "material.h"
+#include "spare/material.h"
 
-#include "texture.h"
+#include "spare/texture.h"
 
 namespace spare {
-Material::Material() {
+Material::Material() {}
+
+void Material::InitDN(Texture *diffuse, Texture *normal) {
+  this->diffuse = diffuse;
+  this->normal = normal;
+  this->specular = diffuse;
 }
 
-void Material::InitDN(Texture* diffuse, Texture* normal) {
-	this->diffuse = diffuse;
-	this->normal = normal;
-	this->specular = diffuse;
-}
-
-void Material::InitDNS(Texture* diffuse, Texture* normal, Texture* specular) {
-	this->diffuse = diffuse;
-	this->normal = normal;
-	this->specular = specular;
+void Material::InitDNS(Texture *diffuse, Texture *normal, Texture *specular) {
+  this->diffuse = diffuse;
+  this->normal = normal;
+  this->specular = specular;
 }
 }  // namespace spare
