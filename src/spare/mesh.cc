@@ -18,14 +18,57 @@
 using std::cout;
 using std::endl;
 
-bool loadAssImp(
-    const std::string &path,
-    std::vector<uint16_t> &indices,        // NOLINT(runtime/references)
-    std::vector<glm::vec3> &vertices,      // NOLINT(runtime/references)
-    std::vector<glm::vec2> &uvs,           // NOLINT(runtime/references)
-    std::vector<glm::vec3> &normals,       // NOLINT(runtime/references)
-    std::vector<glm::vec3> &tangents,      // NOLINT(runtime/references)
-    std::vector<glm::vec3> &bitangents) {  // NOLINT(runtime/references)
+namespace spare {
+Mesh::Mesh() {}
+
+bool Mesh::Init(const std::string &filepath) {
+  if (!LoadAssimp(filepath)) {
+    cout << "Failed to load " << filepath << endl;
+    return false;
+  }
+
+  glGenBuffers(1, &vertex_buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               vertices.size() * sizeof(decltype(vertices)::value_type),
+               &vertices[0], GL_STATIC_DRAW);
+
+  glGenBuffers(1, &uv_buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+  glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(decltype(uvs)::value_type),
+               &uvs[0], GL_STATIC_DRAW);
+
+  glGenBuffers(1, &tangent_buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, tangent_buffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               tangents.size() * sizeof(decltype(tangents)::value_type),
+               &tangents[0], GL_STATIC_DRAW);
+
+  glGenBuffers(1, &bitangent_buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, bitangent_buffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               bitangents.size() * sizeof(decltype(bitangents)::value_type),
+               &bitangents[0], GL_STATIC_DRAW);
+
+  glGenBuffers(1, &normal_buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               normals.size() * sizeof(decltype(normals)::value_type),
+               &normals[0], GL_STATIC_DRAW);
+
+  glGenBuffers(1, &element_buffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+               indices.size() * sizeof(decltype(indices)::value_type),
+               &indices[0], GL_STATIC_DRAW);
+
+  cout << "Number of vertices: " << vertices.size() << endl;
+  cout << "Number of indices: " << indices.size() << endl;
+
+  return true;
+}
+
+bool Mesh::LoadAssimp(const std::string &path) {
   Assimp::Importer importer;
 
   unsigned int flags =
@@ -85,57 +128,6 @@ bool loadAssImp(
   }
 
   // The "scene" pointer will be deleted automatically by "importer"
-  return true;
-}
-
-namespace spare {
-Mesh::Mesh() {}
-
-bool Mesh::Init(const std::string &filepath) {
-  if (!loadAssImp(filepath, indices, vertices, uvs, normals, tangents,
-                  bitangents)) {
-    cout << "Failed to load " << filepath << endl;
-    return false;
-  }
-
-  glGenBuffers(1, &vertex_buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-  glBufferData(GL_ARRAY_BUFFER,
-               vertices.size() * sizeof(decltype(vertices)::value_type),
-               &vertices[0], GL_STATIC_DRAW);
-
-  glGenBuffers(1, &uv_buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-  glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(decltype(uvs)::value_type),
-               &uvs[0], GL_STATIC_DRAW);
-
-  glGenBuffers(1, &tangent_buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, tangent_buffer);
-  glBufferData(GL_ARRAY_BUFFER,
-               tangents.size() * sizeof(decltype(tangents)::value_type),
-               &tangents[0], GL_STATIC_DRAW);
-
-  glGenBuffers(1, &bitangent_buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, bitangent_buffer);
-  glBufferData(GL_ARRAY_BUFFER,
-               bitangents.size() * sizeof(decltype(bitangents)::value_type),
-               &bitangents[0], GL_STATIC_DRAW);
-
-  glGenBuffers(1, &normal_buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
-  glBufferData(GL_ARRAY_BUFFER,
-               normals.size() * sizeof(decltype(normals)::value_type),
-               &normals[0], GL_STATIC_DRAW);
-
-  glGenBuffers(1, &element_buffer);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-               indices.size() * sizeof(decltype(indices)::value_type),
-               &indices[0], GL_STATIC_DRAW);
-
-  cout << "Number of vertices: " << vertices.size() << endl;
-  cout << "Number of indices: " << indices.size() << endl;
-
   return true;
 }
 }  // namespace spare

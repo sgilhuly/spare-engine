@@ -114,22 +114,6 @@ bool Engine::OnInit() {
 
   camera.Init(width, height);
 
-  /*if (!texture_diffuse.Init("stuff/hp_rock_2.png")) {
-    return false;
-  }
-  if (!texture_normal.Init("stuff/hp_rock_2_norm.png")) {
-    return false;
-  }
-  if (!texture_specular.Init("stuff/hp_rock_2_spec.png")) {
-    return false;
-  }
-
-  if (!mesh_cylinder.Init("stuff/cylinder.obj")) {
-    return false;
-  }
-
-  mat_hp_rock_2.InitDNS(&texture_diffuse, &texture_normal, &texture_specular);*/
-
   for (int i = 0; i < 4; i++) {
     int x = i % 2;
     int z = i / 2;
@@ -139,9 +123,6 @@ bool Engine::OnInit() {
     obj.material = resources.GetMaterial("stuff/hp_rock_2");
     obj.mesh = resources.GetMesh("stuff/cylinder.obj");
     obj.shader = resources.GetShaderProgram("stuff/basic_lighting");
-    // obj.material = &mat_hp_rock_2;
-    // obj.mesh = &mesh_cylinder;
-    // obj.shader = &program;
     objects.push_back(obj);
   }
 

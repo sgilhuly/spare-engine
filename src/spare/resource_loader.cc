@@ -7,6 +7,9 @@
 using std::cout;
 using std::endl;
 
+namespace spare {
+namespace {
+
 bool icompare_pred(unsigned char a, unsigned char b) {
   return std::tolower(a) == std::tolower(b);
 }
@@ -21,7 +24,8 @@ bool string_has_extension(const std::string &a, const std::string &b) {
   }
 }
 
-namespace spare {
+}  // namespace
+
 ResourceLoader::ResourceLoader() {}
 
 Material *ResourceLoader::GetMaterial(const std::string &filename) {

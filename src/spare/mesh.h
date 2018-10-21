@@ -24,5 +24,8 @@ class Mesh {
   std::vector<glm::vec3> normals;
   std::vector<glm::vec3> tangents;
   std::vector<glm::vec3> bitangents;
+
+ private:
+  bool LoadAssimp(const std::string &path);
 };
 }  // namespace spare

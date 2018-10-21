@@ -13,43 +13,6 @@
 using std::cout;
 using std::endl;
 
-GLuint loadImageSdl(const char *imagepath) {
-  SDL_Surface *surface = IMG_Load(imagepath);
-  if (surface == NULL) {
-    cout << imagepath << " could not be opened" << endl;
-    return 0;
-  }
-
-  GLuint textureID;
-  glGenTextures(1, &textureID);
-  glBindTexture(GL_TEXTURE_2D, textureID);
-
-  int mode = GL_RGB;
-  if (surface->format->BytesPerPixel == 4) {
-    mode = GL_RGBA;
-  }
-
-  glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode,
-               GL_UNSIGNED_BYTE, surface->pixels);
-  SDL_FreeSurface(surface);
-  surface = NULL;
-
-  // Poor filtering, or ...
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-  // ... nice trilinear filtering ...
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                  GL_LINEAR_MIPMAP_LINEAR);
-  // ... which requires mipmaps. Generate them automatically.
-  glGenerateMipmap(GL_TEXTURE_2D);
-
-  return textureID;
-}
-
 // GLuint loadBMP_custom(const char * imagepath) {
 //  // Data read from the header of the BMP file
 //  unsigned char header[54];
@@ -154,6 +117,8 @@ GLuint loadImageSdl(const char *imagepath) {
 #define FOURCC_DXT3 0x33545844  // Equivalent to "DXT3" in ASCII
 #define FOURCC_DXT5 0x35545844  // Equivalent to "DXT5" in ASCII
 
+namespace spare {
+namespace {
 GLuint loadDDS(const char *imagepath) {
   unsigned char header[124];
 
@@ -249,7 +214,43 @@ GLuint loadDDS(const char *imagepath) {
   return textureID;
 }
 
-namespace spare {
+GLuint loadImageSdl(const char *imagepath) {
+  SDL_Surface *surface = IMG_Load(imagepath);
+  if (surface == NULL) {
+    cout << imagepath << " could not be opened" << endl;
+    return 0;
+  }
+
+  GLuint textureID;
+  glGenTextures(1, &textureID);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+
+  int mode = GL_RGB;
+  if (surface->format->BytesPerPixel == 4) {
+    mode = GL_RGBA;
+  }
+
+  glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode,
+               GL_UNSIGNED_BYTE, surface->pixels);
+  SDL_FreeSurface(surface);
+  surface = NULL;
+
+  // Poor filtering, or ...
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  // ... nice trilinear filtering ...
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_LINEAR_MIPMAP_LINEAR);
+  // ... which requires mipmaps. Generate them automatically.
+  glGenerateMipmap(GL_TEXTURE_2D);
+
+  return textureID;
+}
+}  // namespace
 Texture::Texture() {}
 
 bool Texture::InitDds(const std::string &imagepath) {
