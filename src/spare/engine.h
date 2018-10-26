@@ -5,11 +5,12 @@
 #include "GL/glew.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_opengl.h"
+#include "entt/entt.hpp"
 #include "glm/glm.hpp"
 
 #include "spare/camera.h"
-#include "spare/game_object.h"
 #include "spare/resource_loader.h"
+#include "spare/spatial.h"
 
 namespace spare {
 class Engine {
@@ -28,7 +29,7 @@ class Engine {
   ResourceLoader resources;
   SDL_Window *window = NULL;
   SDL_GLContext context;
-  std::vector<GameObject> objects;
+  entt::registry<> registry;
   glm::vec3 options;
 
   int width;

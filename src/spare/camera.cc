@@ -7,14 +7,13 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "spare/game_object.h"
-
 const float mouse_x_speed = 0.5f;
 const float mouse_y_speed = 0.5f;
 const float camera_distance = 5.0f;
 const float pi = 3.1415927f;
 
 namespace spare {
+
 Camera::Camera() {}
 
 void Camera::Init(int width, int height) {
@@ -48,64 +47,70 @@ void Camera::OnLoop(float delta) {
   light_position = glm::vec3(glm::inverse(view) * glm::vec4(0, 2, 0, 1));
 }
 
-void Camera::DrawObject(const GameObject &obj, const glm::vec3 &options) {
-  glUseProgram(obj.shader->id);
+void Camera::Draw(const Drawable &drawable, const Spatial &spatial,
+                  const glm::vec3 &options) {
+  glUseProgram(drawable.shader->id);
 
-  glm::mat4 mvp = projection * view * obj.transform;
-  glm::mat3 mv = glm::mat3(view * obj.transform);
-  glUniformMatrix4fv(obj.shader->uniform_m, 1, GL_FALSE, &obj.transform[0][0]);
-  glUniformMatrix4fv(obj.shader->uniform_v, 1, GL_FALSE, &view[0][0]);
-  glUniformMatrix3fv(obj.shader->uniform_mv, 1, GL_FALSE, &mv[0][0]);
-  glUniformMatrix4fv(obj.shader->uniform_mvp, 1, GL_FALSE, &mvp[0][0]);
-  glUniform3f(obj.shader->uniform_light_position, light_position.x,
+  glm::mat4 mvp = projection * view * spatial.transform;
+  glm::mat3 mv = glm::mat3(view * spatial.transform);
+  glUniformMatrix4fv(drawable.shader->uniform_m, 1, GL_FALSE,
+                     &spatial.transform[0][0]);
+  glUniformMatrix4fv(drawable.shader->uniform_v, 1, GL_FALSE, &view[0][0]);
+  glUniformMatrix3fv(drawable.shader->uniform_mv, 1, GL_FALSE, &mv[0][0]);
+  glUniformMatrix4fv(drawable.shader->uniform_mvp, 1, GL_FALSE, &mvp[0][0]);
+  glUniform3f(drawable.shader->uniform_light_position, light_position.x,
               light_position.y, light_position.z);
-  glUniform3f(obj.shader->uniform_lighting_options, options.x, options.y,
+  glUniform3f(drawable.shader->uniform_lighting_options, options.x, options.y,
               options.z);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, obj.material->diffuse->id);
-  glUniform1i(obj.shader->uniform_tex_diffuse, 0);
+  glBindTexture(GL_TEXTURE_2D, drawable.material->diffuse->id);
+  glUniform1i(drawable.shader->uniform_tex_diffuse, 0);
 
   glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, obj.material->normal->id);
-  glUniform1i(obj.shader->uniform_tex_normal, 1);
+  glBindTexture(GL_TEXTURE_2D, drawable.material->normal->id);
+  glUniform1i(drawable.shader->uniform_tex_normal, 1);
 
   glActiveTexture(GL_TEXTURE2);
-  glBindTexture(GL_TEXTURE_2D, obj.material->specular->id);
-  glUniform1i(obj.shader->uniform_tex_specular, 2);
+  glBindTexture(GL_TEXTURE_2D, drawable.material->specular->id);
+  glUniform1i(drawable.shader->uniform_tex_specular, 2);
 
-  glEnableVertexAttribArray(obj.shader->attrib_position);
-  glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->vertex_buffer);
-  glVertexAttribPointer(obj.shader->attrib_position, 3, GL_FLOAT, GL_FALSE, 0,
+  glEnableVertexAttribArray(drawable.shader->attrib_position);
+  glBindBuffer(GL_ARRAY_BUFFER, drawable.mesh->vertex_buffer);
+  glVertexAttribPointer(drawable.shader->attrib_position, 3, GL_FLOAT, GL_FALSE,
+                        0, 0);
+
+  glEnableVertexAttribArray(drawable.shader->attrib_uv);
+  glBindBuffer(GL_ARRAY_BUFFER, drawable.mesh->uv_buffer);
+  glVertexAttribPointer(drawable.shader->attrib_uv, 2, GL_FLOAT, GL_FALSE, 0,
                         0);
 
-  glEnableVertexAttribArray(obj.shader->attrib_uv);
-  glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->uv_buffer);
-  glVertexAttribPointer(obj.shader->attrib_uv, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(drawable.shader->attrib_normal);
+  glBindBuffer(GL_ARRAY_BUFFER, drawable.mesh->normal_buffer);
+  glVertexAttribPointer(drawable.shader->attrib_normal, 3, GL_FLOAT, GL_FALSE,
+                        0, 0);
 
-  glEnableVertexAttribArray(obj.shader->attrib_normal);
-  glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->normal_buffer);
-  glVertexAttribPointer(obj.shader->attrib_normal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(drawable.shader->attrib_tangent);
+  glBindBuffer(GL_ARRAY_BUFFER, drawable.mesh->tangent_buffer);
+  glVertexAttribPointer(drawable.shader->attrib_tangent, 3, GL_FLOAT, GL_FALSE,
+                        0, 0);
 
-  glEnableVertexAttribArray(obj.shader->attrib_tangent);
-  glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->tangent_buffer);
-  glVertexAttribPointer(obj.shader->attrib_tangent, 3, GL_FLOAT, GL_FALSE, 0,
-                        0);
+  glEnableVertexAttribArray(drawable.shader->attrib_bitangent);
+  glBindBuffer(GL_ARRAY_BUFFER, drawable.mesh->bitangent_buffer);
+  glVertexAttribPointer(drawable.shader->attrib_bitangent, 3, GL_FLOAT,
+                        GL_FALSE, 0, 0);
 
-  glEnableVertexAttribArray(obj.shader->attrib_bitangent);
-  glBindBuffer(GL_ARRAY_BUFFER, obj.mesh->bitangent_buffer);
-  glVertexAttribPointer(obj.shader->attrib_bitangent, 3, GL_FLOAT, GL_FALSE, 0,
-                        0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable.mesh->element_buffer);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.mesh->element_buffer);
+  glDrawElements(GL_TRIANGLES, drawable.mesh->indices.size(), GL_UNSIGNED_SHORT,
+                 0);
 
-  glDrawElements(GL_TRIANGLES, obj.mesh->indices.size(), GL_UNSIGNED_SHORT, 0);
-
-  glDisableVertexAttribArray(obj.shader->attrib_position);
-  glDisableVertexAttribArray(obj.shader->attrib_uv);
-  glDisableVertexAttribArray(obj.shader->attrib_normal);
-  glDisableVertexAttribArray(obj.shader->attrib_tangent);
-  glDisableVertexAttribArray(obj.shader->attrib_bitangent);
+  glDisableVertexAttribArray(drawable.shader->attrib_position);
+  glDisableVertexAttribArray(drawable.shader->attrib_uv);
+  glDisableVertexAttribArray(drawable.shader->attrib_normal);
+  glDisableVertexAttribArray(drawable.shader->attrib_tangent);
+  glDisableVertexAttribArray(drawable.shader->attrib_bitangent);
   glUseProgram(0);
 }
+
 }  // namespace spare

@@ -12,8 +12,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "spare/camera.h"
-#include "spare/game_object.h"
 #include "spare/resource_loader.h"
+#include "spare/spatial.h"
 
 using std::cout;
 using std::endl;
@@ -117,13 +117,14 @@ bool Engine::OnInit() {
   for (int i = 0; i < 4; i++) {
     int x = i % 2;
     int z = i / 2;
-    GameObject obj;
-    obj.transform =
-        glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2));
-    obj.material = resources.GetMaterial("stuff/hp_rock_2");
-    obj.mesh = resources.GetMesh("stuff/cylinder.obj");
-    obj.shader = resources.GetShaderProgram("stuff/basic_lighting");
-    objects.push_back(obj);
+    auto entity = registry.create();
+    registry.assign<Spatial>(
+        entity,
+        glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2)));
+    registry.assign<Drawable>(
+        entity, resources.GetMaterial("stuff/hp_rock_2"),
+        resources.GetMesh("stuff/cylinder.obj"),
+        resources.GetShaderProgram("stuff/basic_lighting"));
   }
 
   options = glm::vec3(1, 1, 1);
@@ -161,16 +162,21 @@ void Engine::OnEvent(const SDL_Event &event) {
 
 void Engine::OnLoop(float delta) {
   camera.OnLoop(delta);
-  for (auto &obj : objects) {
-    obj.OnLoop(delta);
+  auto view = registry.view<Spatial>();
+  for (auto entity : view) {
+    auto &spatial = view.get(entity);
+    spatial.Update(delta);
   }
 }
 
 void Engine::OnRender(float delta) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  for (auto &obj : objects) {
-    camera.DrawObject(obj, options);
+  auto view = registry.view<Drawable, Spatial>();
+  for (auto entity : view) {
+    auto &drawable = view.get<Drawable>(entity);
+    auto &spatial = view.get<Spatial>(entity);
+    camera.Draw(drawable, spatial, options);
   }
 
   SDL_GL_SwapWindow(window);

@@ -1,7 +1,10 @@
-cmake_minimum_required(VERSION 3.1)
-set (CMAKE_CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.12)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(spare-engine)
+
+message(INFO "${CMAKE_CXX_COMPILER_VERSION}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
@@ -21,6 +24,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/dependencies/entt/src)
 include_directories(${PROJECT_SOURCE_DIR}/dependencies/glm)
 
 # Remove a trailing space that causes linking errors.
@@ -32,8 +36,6 @@ set(SOURCE_FILES
     src/spare/camera.h
     src/spare/engine.cc
     src/spare/engine.h
-    src/spare/game_object.cc
-    src/spare/game_object.h
     src/spare/main.cc
     src/spare/material.cc
     src/spare/material.h
@@ -45,6 +47,8 @@ set(SOURCE_FILES
     src/spare/shader.h
     src/spare/shader_program.cc
     src/spare/shader_program.h
+    src/spare/spatial.cc
+    src/spare/spatial.h
     src/spare/texture.cc
     src/spare/texture.h)
 
