@@ -13,6 +13,8 @@ class ResourceLoader {
  public:
   ResourceLoader();
   Material *GetMaterial(const std::string &filename);
+  Material *GetMaterial(const std::string &diffuse, const std::string &normal,
+                        const std::string &rad);
   Mesh *GetMesh(const std::string &filename);
   ShaderProgram *GetShaderProgram(const std::string &filename);
   Texture *GetTexture(const std::string &filename);

@@ -5,15 +5,9 @@
 namespace spare {
 Material::Material() {}
 
-void Material::InitDN(Texture *diffuse, Texture *normal) {
+void Material::InitDNR(Texture *diffuse, Texture *normal, Texture *rad) {
   this->diffuse = diffuse;
   this->normal = normal;
-  this->specular = diffuse;
-}
-
-void Material::InitDNS(Texture *diffuse, Texture *normal, Texture *specular) {
-  this->diffuse = diffuse;
-  this->normal = normal;
-  this->specular = specular;
+  this->rad = rad;
 }
 }  // namespace spare

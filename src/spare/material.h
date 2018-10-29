@@ -6,11 +6,10 @@ namespace spare {
 class Material {
  public:
   Material();
-  void InitDN(Texture *diffuse, Texture *normal);
-  void InitDNS(Texture *diffuse, Texture *normal, Texture *specular);
+  void InitDNR(Texture *diffuse, Texture *normal, Texture *rad);
 
   Texture *diffuse = NULL;
   Texture *normal = NULL;
-  Texture *specular = NULL;
+  Texture *rad = NULL;
 };
 }  // namespace spare

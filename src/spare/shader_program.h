@@ -27,7 +27,7 @@ class ShaderProgram {
   GLint uniform_mvp = -1;
   GLint uniform_tex_diffuse = -1;
   GLint uniform_tex_normal = -1;
-  GLint uniform_tex_specular = -1;
+  GLint uniform_tex_rad = -1;
   GLint uniform_light_position = -1;
   GLint uniform_lighting_options = -1;
 

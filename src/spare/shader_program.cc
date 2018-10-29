@@ -79,7 +79,7 @@ bool ShaderProgram::Init(const std::string &name) {
   uniform_mvp = glGetUniformLocation(id, "mvp");
   uniform_tex_diffuse = glGetUniformLocation(id, "tex_diffuse");
   uniform_tex_normal = glGetUniformLocation(id, "tex_normal");
-  uniform_tex_specular = glGetUniformLocation(id, "tex_specular");
+  uniform_tex_rad = glGetUniformLocation(id, "tex_rad");
   uniform_light_position = glGetUniformLocation(id, "light_position");
   uniform_lighting_options = glGetUniformLocation(id, "lighting_options");
 

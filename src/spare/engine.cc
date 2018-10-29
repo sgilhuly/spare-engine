@@ -122,7 +122,10 @@ bool Engine::OnInit() {
         entity,
         glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2)));
     registry.assign<Drawable>(
-        entity, resources.GetMaterial("stuff/hp_rock_2"),
+        entity,
+        resources.GetMaterial("stuff/brick/Stone_Wall_007_COLOR.jpg",
+                              "stuff/brick/Stone_Wall_007_NORM.jpg",
+                              "stuff/brick/Stone_Wall_007_RAD.png"),
         resources.GetMesh("stuff/cylinder.obj"),
         resources.GetShaderProgram("stuff/basic_lighting"));
   }
@@ -155,6 +158,10 @@ void Engine::OnEvent(const SDL_Event &event) {
         case SDLK_3:
           options.z = options.z > 0.5f ? 0 : 1;
           break;
+
+        case SDLK_SPACE:
+          paused = !paused;
+          break;
       }
       break;
   }
@@ -162,10 +169,13 @@ void Engine::OnEvent(const SDL_Event &event) {
 
 void Engine::OnLoop(float delta) {
   camera.OnLoop(delta);
-  auto view = registry.view<Spatial>();
-  for (auto entity : view) {
-    auto &spatial = view.get(entity);
-    spatial.Update(delta);
+
+  if (!paused) {
+    auto view = registry.view<Spatial>();
+    for (auto entity : view) {
+      auto &spatial = view.get(entity);
+      spatial.Update(delta);
+    }
   }
 }
 

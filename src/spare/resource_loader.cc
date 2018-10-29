@@ -29,28 +29,31 @@ bool string_has_extension(const std::string &a, const std::string &b) {
 ResourceLoader::ResourceLoader() {}
 
 Material *ResourceLoader::GetMaterial(const std::string &filename) {
-  if (materials.count(filename)) {
-    return materials[filename];
+  return GetMaterial(filename + ".png", filename + "_norm.png",
+                     filename + "_spec.png");
+}
+
+Material *ResourceLoader::GetMaterial(const std::string &diffuse,
+                                      const std::string &normal,
+                                      const std::string &rad) {
+  if (materials.count(diffuse)) {
+    return materials[diffuse];
   }
 
-  cout << "Loading new material: " << filename << endl;
+  cout << "Loading new material: " << diffuse << endl;
 
-  Texture *diffuse = GetTexture(filename + ".png");
-  Texture *normal = GetTexture(filename + "_norm.png");
-  Texture *specular = GetTexture(filename + "_spec.png");
+  Texture *diffuse_tex = GetTexture(diffuse);
+  Texture *normal_tex = GetTexture(normal);
+  Texture *rad_tex = GetTexture(rad);
 
-  if (diffuse == NULL || normal == NULL) {
+  if (!diffuse_tex || !normal_tex || !rad_tex) {
     return NULL;
   }
 
-  if (specular == NULL) {
-    specular = diffuse;
-  }
-
   Material *material = new Material();
-  material->InitDNS(diffuse, normal, specular);
+  material->InitDNR(diffuse_tex, normal_tex, rad_tex);
 
-  materials[filename] = material;
+  materials[diffuse] = material;
   return material;
 }
 

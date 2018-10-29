@@ -72,8 +72,8 @@ void Camera::Draw(const Drawable &drawable, const Spatial &spatial,
   glUniform1i(drawable.shader->uniform_tex_normal, 1);
 
   glActiveTexture(GL_TEXTURE2);
-  glBindTexture(GL_TEXTURE_2D, drawable.material->specular->id);
-  glUniform1i(drawable.shader->uniform_tex_specular, 2);
+  glBindTexture(GL_TEXTURE_2D, drawable.material->rad->id);
+  glUniform1i(drawable.shader->uniform_tex_rad, 2);
 
   glEnableVertexAttribArray(drawable.shader->attrib_position);
   glBindBuffer(GL_ARRAY_BUFFER, drawable.mesh->vertex_buffer);

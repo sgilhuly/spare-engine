@@ -34,5 +34,6 @@ class Engine {
 
   int width;
   int height;
+  bool paused = false;
 };
 }  // namespace spare

@@ -11,7 +11,7 @@ out vec3 colour;
 
 uniform sampler2D tex_diffuse;
 uniform sampler2D tex_normal;
-uniform sampler2D tex_specular;
+uniform sampler2D tex_rad;  // RAD stands for roughness, ambient, displacement
 uniform mat4 m;
 uniform mat4 v;
 uniform mat3 mv;
@@ -23,8 +23,8 @@ void main() {
 	float light_power = 30;
 
 	vec3 material_diffuse = texture(tex_diffuse, uv).rgb;
-	vec3 material_ambient = material_diffuse;
-	vec3 material_specular = texture(tex_specular, uv).rgb * 0.3;
+	vec3 material_ambient = material_diffuse * texture(tex_rad, uv).ggg;
+	vec3 material_specular = texture(tex_rad, uv).rrr * 0.3;
 
 	vec3 normal_tangentspace = normalize(texture(tex_normal, uv).rgb * 2 - 1);
 
