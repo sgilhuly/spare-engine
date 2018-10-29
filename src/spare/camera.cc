@@ -48,7 +48,7 @@ void Camera::OnLoop(float delta) {
 }
 
 void Camera::Draw(const Drawable &drawable, const Spatial &spatial,
-                  const glm::vec3 &options) {
+                  const glm::vec4 &options) {
   glUseProgram(drawable.shader->id);
 
   glm::mat4 mvp = projection * view * spatial.transform;
@@ -60,8 +60,8 @@ void Camera::Draw(const Drawable &drawable, const Spatial &spatial,
   glUniformMatrix4fv(drawable.shader->uniform_mvp, 1, GL_FALSE, &mvp[0][0]);
   glUniform3f(drawable.shader->uniform_light_position, light_position.x,
               light_position.y, light_position.z);
-  glUniform3f(drawable.shader->uniform_lighting_options, options.x, options.y,
-              options.z);
+  glUniform4f(drawable.shader->uniform_lighting_options, options.x, options.y,
+              options.z, options.w);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, drawable.material->diffuse->id);

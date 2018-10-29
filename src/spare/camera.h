@@ -21,7 +21,7 @@ class Camera {
   void Init(int width, int height);
   void OnLoop(float delta);
   void Draw(const Drawable &drawable, const Spatial &spatial,
-            const glm::vec3 &options);
+            const glm::vec4 &options);
 
   float fov;
   float aspect_ratio;

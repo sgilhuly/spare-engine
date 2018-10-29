@@ -121,16 +121,24 @@ bool Engine::OnInit() {
     registry.assign<Spatial>(
         entity,
         glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2)));
+    // Material* material = (x == z ?
+    //   resources.GetMaterial("stuff/brick/Stone_Wall_007_COLOR.jpg",
+    //                           "stuff/brick/Stone_Wall_007_NORM.jpg",
+    //                           "stuff/brick/Stone_Wall_007_RAD.png") :
+    //   resources.GetMaterial("stuff/test/test_diffuse.png",
+    //                           "stuff/test/test_normal.png",
+    //                           "stuff/test/test_rad.png"));
+    Material* material = resources.GetMaterial("stuff/test/test_diffuse.png",
+                                               "stuff/test/test_normal.png",
+                                               "stuff/test/test_rad.png");
     registry.assign<Drawable>(
         entity,
-        resources.GetMaterial("stuff/brick/Stone_Wall_007_COLOR.jpg",
-                              "stuff/brick/Stone_Wall_007_NORM.jpg",
-                              "stuff/brick/Stone_Wall_007_RAD.png"),
+        material,
         resources.GetMesh("stuff/cylinder.obj"),
         resources.GetShaderProgram("stuff/basic_lighting"));
   }
 
-  options = glm::vec3(1, 1, 1);
+  options = glm::vec4(1, 1, 1, 1);
 
   return true;
 }
@@ -157,6 +165,10 @@ void Engine::OnEvent(const SDL_Event &event) {
 
         case SDLK_3:
           options.z = options.z > 0.5f ? 0 : 1;
+          break;
+
+        case SDLK_4:
+          options.w = options.w > 0.5f ? 0 : 1;
           break;
 
         case SDLK_SPACE:

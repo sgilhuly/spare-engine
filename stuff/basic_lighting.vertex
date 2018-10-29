@@ -20,28 +20,28 @@ uniform mat4 mvp;
 uniform vec3 light_position;
 
 void main() {
-	gl_Position = mvp * vec4(vertex_position, 1);
+  gl_Position = mvp * vec4(vertex_position, 1);
 
-	position_worldspace = (m * vec4(vertex_position, 1)).xyz;
+  position_worldspace = (m * vec4(vertex_position, 1)).xyz;
 
-	vec3 position_cameraspace = (v * m * vec4(vertex_position, 1)).xyz;
-	eyedirection_cameraspace = vec3(0, 0, 0) - position_cameraspace;
+  vec3 position_cameraspace = (v * m * vec4(vertex_position, 1)).xyz;
+  eyedirection_cameraspace = vec3(0, 0, 0) - position_cameraspace;
 
-	vec3 lightposition_cameraspace = (v * vec4(light_position, 1)).xyz;
-	lightdirection_cameraspace = lightposition_cameraspace + eyedirection_cameraspace;
+  vec3 lightposition_cameraspace = (v * vec4(light_position, 1)).xyz;
+  lightdirection_cameraspace = lightposition_cameraspace + eyedirection_cameraspace;
 
-	uv = vertex_uv;
+  uv = vertex_uv;
 
-	vec3 tangent_cameraspace = mv * vertex_tangent;
-	vec3 bitangent_cameraspace = mv * vertex_bitangent;
-	vec3 normal_cameraspace = mv * vertex_normal;
+  vec3 tangent_cameraspace = mv * vertex_tangent;
+  vec3 bitangent_cameraspace = mv * vertex_bitangent;
+  vec3 normal_cameraspace = mv * vertex_normal;
 
-	mat3 tbn = transpose(mat3(
-		tangent_cameraspace,
-		bitangent_cameraspace,
-		normal_cameraspace
-	));
+  mat3 tbn = transpose(mat3(
+    tangent_cameraspace,
+    bitangent_cameraspace,
+    normal_cameraspace
+  ));
 
-	lightdirection_tangentspace = tbn * lightdirection_cameraspace;
-	eyedirection_tangentspace = tbn * eyedirection_cameraspace;
+  lightdirection_tangentspace = tbn * lightdirection_cameraspace;
+  eyedirection_tangentspace = tbn * eyedirection_cameraspace;
 }

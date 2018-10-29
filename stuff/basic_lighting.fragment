@@ -16,45 +16,89 @@ uniform mat4 m;
 uniform mat4 v;
 uniform mat3 mv;
 uniform vec3 light_position;
-uniform vec3 lighting_options;
+uniform vec4 lighting_options;
+
+vec2 ParallaxMapping(vec2 in_uv, vec3 view_dir);
 
 void main() {
-	vec3 light_colour = vec3(1, 1, 1);
-	float light_power = 30;
+  vec3 light_colour = vec3(1, 1, 1);
+  float light_power = 30;
 
-	vec3 material_diffuse = texture(tex_diffuse, uv).rgb;
-	vec3 material_ambient = material_diffuse * texture(tex_rad, uv).ggg;
-	vec3 material_specular = texture(tex_rad, uv).rrr * 0.3;
+  vec3 E = normalize(eyedirection_tangentspace);
 
-	vec3 normal_tangentspace = normalize(texture(tex_normal, uv).rgb * 2 - 1);
+  vec2 parallax_uv;
+  if (lighting_options.w > 0.5) {
+    parallax_uv = ParallaxMapping(uv, E);
+  } else {
+    parallax_uv = uv;
+  }
 
-	float distance = length(light_position - position_worldspace);
-	vec3 n = normal_tangentspace;
-	vec3 l = normalize(lightdirection_tangentspace);
-	float cos_theta = clamp(dot(n, l), 0, 1);
+  vec3 material_diffuse = texture(tex_diffuse, parallax_uv).rgb;
+  vec3 material_ambient = material_diffuse * texture(tex_rad, parallax_uv).ggg;
+  vec3 material_specular = texture(tex_rad, parallax_uv).rrr * 0.3;
 
-	vec3 E = normalize(eyedirection_tangentspace);
-	vec3 R = reflect(-l, n);
-	float cos_alpha = clamp(dot(E, R), 0, 1);
+  vec3 normal_tangentspace = normalize(texture(tex_normal, parallax_uv).rgb * 2 - 1);
 
-	// colour =
-	// 	material_ambient +
-	// 	material_diffuse * light_colour * light_power * cos_theta / (distance * distance) +
-	// 	material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+  float distance = length(light_position - position_worldspace);
+  vec3 n = normal_tangentspace;
+  vec3 l = normalize(lightdirection_tangentspace);
+  float cos_theta = clamp(dot(n, l), 0, 1);
 
-	colour = vec3(0, 0, 0);
-	if (lighting_options.x > 0.5) {
-		colour += 0.1 * material_ambient;
-	}
-	if (lighting_options.y > 0.5) {
-		colour += 1.0 * material_diffuse * light_colour * light_power * cos_theta / (distance * distance);
-	}
-	if (lighting_options.z > 0.5) {
-		colour += 1.0 * material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
-	}
-	if (lighting_options.x < 0.5 && lighting_options.y < 0.5 && lighting_options.z < 0.5) {
-		colour = texture(tex_normal, uv).rgb;
-	}
+  vec3 R = reflect(-l, n);
+  float cos_alpha = clamp(dot(E, R), 0, 1);
 
-	// colour = material_diffuse;
+  // colour =
+  //  material_ambient +
+  //  material_diffuse * light_colour * light_power * cos_theta / (distance * distance) +
+  //  material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+
+  colour = vec3(0, 0, 0);
+  if (lighting_options.x > 0.5) {
+    colour += 0.1 * material_ambient;
+  }
+  if (lighting_options.y > 0.5) {
+    colour += 1.0 * material_diffuse * light_colour * light_power * cos_theta / (distance * distance);
+  }
+  if (lighting_options.z > 0.5) {
+    colour += 1.0 * material_specular * light_colour * light_power * pow(cos_alpha, 5) / (distance * distance);
+  }
+  if (lighting_options.x < 0.5 && lighting_options.y < 0.5 && lighting_options.z < 0.5) {
+    colour = texture(tex_normal, parallax_uv).rgb;
+  }
+
+  // colour = material_diffuse;
+}
+
+vec2 ParallaxMapping(vec2 in_uv, vec3 view_dir) {
+  //float height = texture(tex_rad, in_uv).b;
+  //float height_scale = 0.03f;
+  //vec2 p = view_dir.xy / view_dir.z * (height * height_scale);
+  //return in_uv - p;
+
+  const float max_layers = 32;
+  const float min_layers = 8;
+  float num_layers = mix(max_layers, min_layers, abs(dot(vec3(0, 0, 1), view_dir)));
+  float height_scale = 0.05;
+  float layer_depth = 1.0 / num_layers;
+  float current_layer_depth = 0;
+  vec2 P = view_dir.xy * height_scale;
+  vec2 delta_uv = P / num_layers;
+  delta_uv = delta_uv * vec2(1, -1);
+
+  vec2 current_uv = in_uv;
+  float current_depth_map_value = texture(tex_rad, current_uv).b;
+
+  while (current_layer_depth < current_depth_map_value) {
+    current_uv -= delta_uv;
+    current_depth_map_value = texture(tex_rad, current_uv).b;
+    current_layer_depth += layer_depth;
+  }
+
+  vec2 prev_uv = current_uv + delta_uv;
+  float after_depth = current_depth_map_value - current_layer_depth;
+  float before_depth = texture(tex_rad, prev_uv).b - current_layer_depth + layer_depth;
+  float weight = after_depth / (after_depth - before_depth);
+  vec2 final_uv = prev_uv * weight + current_uv * (1.0 - weight);
+
+  return final_uv;
 }

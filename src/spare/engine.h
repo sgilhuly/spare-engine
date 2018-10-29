@@ -30,7 +30,7 @@ class Engine {
   SDL_Window *window = NULL;
   SDL_GLContext context;
   entt::registry<> registry;
-  glm::vec3 options;
+  glm::vec4 options;
 
   int width;
   int height;
