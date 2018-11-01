@@ -27,8 +27,8 @@ class Camera {
   float aspect_ratio;
   float near_clip;
   float far_clip;
-  float pitch = 30.0f;
-  float rotation = 30.0f;
+  float pitch = glm::radians(30.0f);
+  float rotation = glm::radians(0.0f);
 
   glm::mat4 projection;
   glm::mat4 view;

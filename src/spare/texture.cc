@@ -1,5 +1,6 @@
 #include "spare/texture.h"
 
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -220,6 +221,23 @@ GLuint loadImageSdl(const char *imagepath) {
     cout << imagepath << " could not be opened" << endl;
     return 0;
   }
+
+  // Flip the image by swapping the rows, outside to in.
+  uint8_t *temp_row = new uint8_t[surface->pitch];
+  int rows_to_swap = static_cast<int>(surface->h * 0.5f);
+  for (int i = 0; i < rows_to_swap; i++) {
+    memcpy(temp_row,
+           static_cast<uint8_t *>(surface->pixels) + (surface->pitch * i),
+           surface->pitch);
+    memcpy(static_cast<uint8_t *>(surface->pixels) + (surface->pitch * i),
+           static_cast<uint8_t *>(surface->pixels) +
+               (surface->pitch * (surface->h - i - 1)),
+           surface->pitch);
+    memcpy(static_cast<uint8_t *>(surface->pixels) +
+               (surface->pitch * (surface->h - i - 1)),
+           temp_row, surface->pitch);
+  }
+  delete[] temp_row;
 
   GLuint textureID;
   glGenTextures(1, &textureID);

@@ -114,27 +114,32 @@ bool Engine::OnInit() {
 
   camera.Init(width, height);
 
+  // TODO: fix this with proper scene loading
   for (int i = 0; i < 4; i++) {
     int x = i % 2;
     int z = i / 2;
     auto entity = registry.create();
     registry.assign<Spatial>(
         entity,
-        glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2)));
-    // Material* material = (x == z ?
-    //   resources.GetMaterial("stuff/brick/Stone_Wall_007_COLOR.jpg",
-    //                           "stuff/brick/Stone_Wall_007_NORM.jpg",
-    //                           "stuff/brick/Stone_Wall_007_RAD.png") :
-    //   resources.GetMaterial("stuff/test/test_diffuse.png",
-    //                           "stuff/test/test_normal.png",
-    //                           "stuff/test/test_rad.png"));
-    Material* material = resources.GetMaterial("stuff/test/test_diffuse.png",
+        glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2)), 1.0f);
+    Material *material = resources.GetMaterial("stuff/test/test_diffuse.png",
                                                "stuff/test/test_normal.png",
                                                "stuff/test/test_rad.png");
     registry.assign<Drawable>(
         entity,
         material,
         resources.GetMesh("stuff/cylinder.obj"),
+        resources.GetShaderProgram("stuff/basic_lighting"));
+  }
+
+  {
+    auto entity = registry.create();
+    registry.assign<Spatial>(entity, glm::mat4(1), 0.0f);
+    Material *material = resources.GetMaterial("stuff/rgb/rgb_diffuse.png",
+                                               "stuff/rgb/rgb_normal.png",
+                                               "stuff/rgb/rgb_rad.png");
+    registry.assign<Drawable>(
+        entity, material, resources.GetMesh("stuff/axes.obj"),
         resources.GetShaderProgram("stuff/basic_lighting"));
   }
 

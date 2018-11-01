@@ -6,7 +6,7 @@
 namespace spare {
 
 void Spatial::Update(float delta) {
-  transform = glm::rotate(transform, delta, glm::vec3(0, 1, 0));
+  transform = glm::rotate(transform, rotate_speed * delta, glm::vec3(0, 1, 0));
 }
 
 }  // namespace spare

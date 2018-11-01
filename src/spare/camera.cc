@@ -9,7 +9,7 @@
 
 const float mouse_x_speed = 0.5f;
 const float mouse_y_speed = 0.5f;
-const float camera_distance = 5.0f;
+const float camera_distance = 10.0f;
 const float pi = 3.1415927f;
 
 namespace spare {
@@ -36,15 +36,15 @@ void Camera::OnLoop(float delta) {
   pitch += y * mouse_y_speed * delta;
   pitch = std::fmin(std::fmax(pitch, -pi / 3), pi / 3);
 
-  float cam_x = 2 * cos(rotation) * cos(pitch) * camera_distance;
-  float cam_y = 2 * sin(pitch) * camera_distance;
-  float cam_z = 2 * sin(rotation) * cos(pitch) * camera_distance;
+  float cam_x = -sin(rotation) * cos(pitch) * camera_distance;
+  float cam_y = sin(pitch) * camera_distance;
+  float cam_z = cos(rotation) * cos(pitch) * camera_distance;
 
   view = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(0, 0, 0),
                      glm::vec3(0, 1, 0));
 
-  // Position a light source 2 units above the camera
-  light_position = glm::vec3(glm::inverse(view) * glm::vec4(0, 2, 0, 1));
+  // Position a light on the camera.
+  light_position = glm::vec3(cam_x, cam_y, cam_z);
 }
 
 void Camera::Draw(const Drawable &drawable, const Spatial &spatial,
