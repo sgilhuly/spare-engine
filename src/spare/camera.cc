@@ -29,12 +29,14 @@ void Camera::Init(int width, int height) {
 void Camera::OnLoop(float delta) {
   int x = 0;
   int y = 0;
-  SDL_GetRelativeMouseState(&x, &y);
+  int state = SDL_GetRelativeMouseState(&x, &y);
 
-  rotation += x * mouse_x_speed * delta;
-  rotation = std::fmod(rotation, 2 * pi);
-  pitch += y * mouse_y_speed * delta;
-  pitch = std::fmin(std::fmax(pitch, -pi / 3), pi / 3);
+  if (state) {
+    rotation += x * mouse_x_speed * delta;
+    rotation = std::fmod(rotation, 2 * pi);
+    pitch += y * mouse_y_speed * delta;
+    pitch = std::fmin(std::fmax(pitch, -pi / 3), pi / 3);
+  }
 
   float cam_x = -sin(rotation) * cos(pitch) * camera_distance;
   float cam_y = sin(pitch) * camera_distance;
