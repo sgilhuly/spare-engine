@@ -99,14 +99,8 @@ Texture *ResourceLoader::GetTexture(const std::string &filename) {
   cout << "Loading new texture: " << filename << endl;
 
   Texture *texture = new Texture();
-  bool success;
-  if (string_has_extension(filename, ".dds")) {
-    success = texture->InitDds(filename);
-  } else {
-    success = texture->Init(filename);
-  }
 
-  if (!success) {
+  if (!texture->Init(filename)) {
     delete texture;
     return NULL;
   }
