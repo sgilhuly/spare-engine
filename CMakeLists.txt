@@ -50,7 +50,19 @@ set(SOURCE_FILES
     src/spare/spatial.cc
     src/spare/spatial.h
     src/spare/texture.cc
-    src/spare/texture.h)
+    src/spare/texture.h
+
+    src/spare/phiz/aabb.cc
+    src/spare/phiz/aabb.h
+    src/spare/phiz/bsphere.cc
+    src/spare/phiz/bsphere.h
+    src/spare/phiz/intersection.h
+    src/spare/phiz/phiz_engine.cc
+    src/spare/phiz/phiz_engine.h
+    src/spare/phiz/phiz_object.cc
+    src/spare/phiz/phiz_object.h
+    src/spare/phiz/plane.cc
+    src/spare/phiz/plane.h)
 
 # Includes for project
 # include_directories(src)

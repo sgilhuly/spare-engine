@@ -9,6 +9,7 @@
 #include "glm/glm.hpp"
 
 #include "spare/camera.h"
+#include "spare/phiz/phiz_engine.h"
 #include "spare/resource_loader.h"
 #include "spare/spatial.h"
 
@@ -26,6 +27,7 @@ class Engine {
  private:
   bool running = true;
   Camera camera;
+  PhizEngine phiz_engine;
   ResourceLoader resources;
   SDL_Window *window = NULL;
   SDL_GLContext context;

@@ -9,7 +9,7 @@
 
 const float mouse_x_speed = 0.5f;
 const float mouse_y_speed = 0.5f;
-const float camera_distance = 10.0f;
+const float camera_distance = 20.0f;
 const float pi = 3.1415927f;
 
 namespace spare {
@@ -53,10 +53,11 @@ void Camera::Draw(const Drawable &drawable, const Spatial &spatial,
                   const glm::vec4 &options) {
   glUseProgram(drawable.shader->id);
 
-  glm::mat4 mvp = projection * view * spatial.transform;
-  glm::mat3 mv = glm::mat3(view * spatial.transform);
+  glm::mat4 transform = spatial.GetTransform();
+  glm::mat4 mvp = projection * view * transform;
+  glm::mat3 mv = glm::mat3(view * transform);
   glUniformMatrix4fv(drawable.shader->uniform_m, 1, GL_FALSE,
-                     &spatial.transform[0][0]);
+                     &transform[0][0]);
   glUniformMatrix4fv(drawable.shader->uniform_v, 1, GL_FALSE, &view[0][0]);
   glUniformMatrix3fv(drawable.shader->uniform_mv, 1, GL_FALSE, &mv[0][0]);
   glUniformMatrix4fv(drawable.shader->uniform_mvp, 1, GL_FALSE, &mvp[0][0]);

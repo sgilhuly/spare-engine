@@ -5,8 +5,8 @@
 
 namespace spare {
 
-void Spatial::Update(float delta) {
-  transform = glm::rotate(transform, rotate_speed * delta, glm::vec3(0, 1, 0));
+glm::mat4 Spatial::GetTransform() const {
+  return glm::translate(glm::mat4(1.f), position);
 }
 
 }  // namespace spare

@@ -10,8 +10,10 @@
 #include "SDL2/SDL_opengl.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 #include "spare/camera.h"
+#include "spare/phiz/phiz_object.h"
 #include "spare/resource_loader.h"
 #include "spare/spatial.h"
 
@@ -19,7 +21,7 @@ using std::cout;
 using std::endl;
 
 namespace spare {
-Engine::Engine(int width, int height) : width(width), height(height) {}
+Engine::Engine(int width, int height) : width(width), height(height), phiz_engine(&registry) {}
 
 int Engine::OnExecute() {
   if (!OnInit()) {
@@ -121,7 +123,9 @@ bool Engine::OnInit() {
     auto entity = registry.create();
     registry.assign<Spatial>(
         entity,
-        glm::translate(glm::mat4(1), glm::vec3(x * 4 - 2, 0, z * 4 - 2)), 1.0f);
+        glm::vec3(x * 4 - 2, 0, z * 4 - 2),
+        glm::quat());
+    registry.assign<PhizObject>(entity, glm::vec3(1, 0, 0), glm::quat());
     Material *material = resources.GetMaterial("stuff/test/test_diffuse.png",
                                                "stuff/test/test_normal.png",
                                                "stuff/test/test_rad.png");
@@ -134,7 +138,7 @@ bool Engine::OnInit() {
 
   {
     auto entity = registry.create();
-    registry.assign<Spatial>(entity, glm::mat4(1), 0.0f);
+    registry.assign<Spatial>(entity, glm::vec3(), glm::quat());
     Material *material = resources.GetMaterial("stuff/rgb/rgb_diffuse.png",
                                                "stuff/rgb/rgb_normal.png",
                                                "stuff/rgb/rgb_rad.png");
@@ -188,11 +192,7 @@ void Engine::OnLoop(float delta) {
   camera.OnLoop(delta);
 
   if (!paused) {
-    auto view = registry.view<Spatial>();
-    for (auto entity : view) {
-      auto &spatial = view.get(entity);
-      spatial.Update(delta);
-    }
+    phiz_engine.IntegrateRegistry(delta);
   }
 }
 

@@ -3,14 +3,15 @@
 #include <map>
 
 #include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 namespace spare {
 
 struct Spatial {
-  glm::mat4 transform;
-  float rotate_speed;
+  glm::vec3 position;
+  glm::quat rotation;
 
-  void Update(float delta);
+  glm::mat4 GetTransform() const;
 };
 
 }  // namespace spare
