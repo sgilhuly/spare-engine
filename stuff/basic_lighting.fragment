@@ -27,7 +27,7 @@ void main() {
   debug_colour = vec3(0, 0, 0);
 
   vec3 light_colour = vec3(1, 1, 1);
-  float light_power = 200;
+  float light_power = 10;
 
   vec3 E = normalize(eyedirection_tangentspace);
 

@@ -7,9 +7,9 @@
 #include "glm/glm.hpp"
 
 namespace spare {
-class Mesh {
+class MeshData {
  public:
-  Mesh();
+  MeshData();
   bool Init(const std::string &objpath);
 
   GLuint vertex_buffer = 0;

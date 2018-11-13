@@ -28,14 +28,15 @@ bool string_has_extension(const std::string &a, const std::string &b) {
 
 ResourceLoader::ResourceLoader() {}
 
-Material *ResourceLoader::GetMaterial(const std::string &filename) {
-  return GetMaterial(filename + ".png", filename + "_norm.png",
-                     filename + "_spec.png");
-}
+// Material *ResourceLoader::GetMaterial(const std::string &filename) {
+//   return GetMaterial(filename + ".png", filename + "_norm.png",
+//                      filename + "_spec.png");
+// }
 
 Material *ResourceLoader::GetMaterial(const std::string &diffuse,
                                       const std::string &normal,
-                                      const std::string &rad) {
+                                      const std::string &rad,
+                                      const std::string &shader) {
   if (materials.count(diffuse)) {
     return materials[diffuse];
   }
@@ -45,26 +46,27 @@ Material *ResourceLoader::GetMaterial(const std::string &diffuse,
   Texture *diffuse_tex = GetTexture(diffuse);
   Texture *normal_tex = GetTexture(normal);
   Texture *rad_tex = GetTexture(rad);
+  ShaderProgram *shader_program = GetShaderProgram(shader);
 
-  if (!diffuse_tex || !normal_tex || !rad_tex) {
+  if (!diffuse_tex || !normal_tex || !rad_tex || !shader_program) {
     return NULL;
   }
 
   Material *material = new Material();
-  material->InitDNR(diffuse_tex, normal_tex, rad_tex);
+  material->InitDNR(diffuse_tex, normal_tex, rad_tex, shader_program);
 
   materials[diffuse] = material;
   return material;
 }
 
-Mesh *ResourceLoader::GetMesh(const std::string &filename) {
+MeshData *ResourceLoader::GetMesh(const std::string &filename) {
   if (meshes.count(filename)) {
     return meshes[filename];
   }
 
   cout << "Loading new mesh: " << filename << endl;
 
-  Mesh *mesh = new Mesh();
+  MeshData *mesh = new MeshData();
   if (!mesh->Init(filename)) {
     delete mesh;
     return NULL;

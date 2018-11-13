@@ -11,8 +11,12 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/quaternion.hpp"
 
-#include "spare/camera.h"
+#include "spare/go/camera.h"
+#include "spare/go/camera_arm.h"
+#include "spare/go/go.h"
+#include "spare/go/mesh.h"
 #include "spare/phiz/phiz_object.h"
 #include "spare/resource_loader.h"
 #include "spare/spatial.h"
@@ -21,7 +25,7 @@ using std::cout;
 using std::endl;
 
 namespace spare {
-Engine::Engine(int width, int height) : width(width), height(height), phiz_engine(&registry) {}
+Engine::Engine(int width, int height) : width(width), height(height) {}
 
 int Engine::OnExecute() {
   if (!OnInit()) {
@@ -114,38 +118,34 @@ bool Engine::OnInit() {
   glEnable(GL_CULL_FACE);
   glClearColor(0.1f, 0.2f, 0.3f, 1);
 
-  camera.Init(width, height);
-
   // TODO: fix this with proper scene loading
-  for (int i = 0; i < 4; i++) {
+  MeshData *pillar_mesh = resources.GetMesh("stuff/cylinder.obj");
+  Material *bricks_mat = resources.GetMaterial(
+      "stuff/test/test_diffuse.png", "stuff/test/test_normal.png",
+      "stuff/test/test_rad.png", "stuff/basic_lighting");
+  MeshData *axes_mesh = resources.GetMesh("stuff/axes.obj");
+  Material *rgb_mat = resources.GetMaterial(
+      "stuff/rgb/rgb_diffuse.png", "stuff/rgb/rgb_normal.png",
+      "stuff/rgb/rgb_rad.png", "stuff/basic_lighting");
+  Go *go;
+
+  for (int i = 0; i < 4; ++i) {
     int x = i % 2;
     int z = i / 2;
-    auto entity = registry.create();
-    registry.assign<Spatial>(
-        entity,
-        glm::vec3(x * 4 - 2, 0, z * 4 - 2),
-        glm::quat());
-    registry.assign<PhizObject>(entity, glm::vec3(1, 0, 0), glm::quat());
-    Material *material = resources.GetMaterial("stuff/test/test_diffuse.png",
-                                               "stuff/test/test_normal.png",
-                                               "stuff/test/test_rad.png");
-    registry.assign<Drawable>(
-        entity,
-        material,
-        resources.GetMesh("stuff/cylinder.obj"),
-        resources.GetShaderProgram("stuff/basic_lighting"));
+    go = new Mesh(this, pillar_mesh, bricks_mat);
+    go->SetPosition(glm::vec3(x * 4 - 2, 0, z * 4 - 2));
+    root->AddChild(go);
   }
 
-  {
-    auto entity = registry.create();
-    registry.assign<Spatial>(entity, glm::vec3(), glm::quat());
-    Material *material = resources.GetMaterial("stuff/rgb/rgb_diffuse.png",
-                                               "stuff/rgb/rgb_normal.png",
-                                               "stuff/rgb/rgb_rad.png");
-    registry.assign<Drawable>(
-        entity, material, resources.GetMesh("stuff/axes.obj"),
-        resources.GetShaderProgram("stuff/basic_lighting"));
-  }
+  go = new Mesh(this, axes_mesh, rgb_mat);
+  root->AddChild(go);
+
+  Go *camera_arm = new CameraArm(this);
+  root->AddChild(camera_arm);
+
+  Go *camera = new Camera(this, width, height, 60.0f, 0.1f, 100.0f);
+  camera->SetPosition(glm::vec3(0, 0, -20));
+  camera_arm->AddChild(camera);
 
   options = glm::vec4(1, 1, 1, 1);
 
@@ -189,22 +189,15 @@ void Engine::OnEvent(const SDL_Event &event) {
 }
 
 void Engine::OnLoop(float delta) {
-  camera.OnLoop(delta);
-
   if (!paused) {
-    phiz_engine.IntegrateRegistry(delta);
+    UpdateTree(delta);
   }
 }
 
 void Engine::OnRender(float delta) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  auto view = registry.view<Drawable, Spatial>();
-  for (auto entity : view) {
-    auto &drawable = view.get<Drawable>(entity);
-    auto &spatial = view.get<Spatial>(entity);
-    camera.Draw(drawable, spatial, options);
-  }
+  DrawTree();
 
   SDL_GL_SwapWindow(window);
 }

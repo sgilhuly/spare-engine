@@ -24,7 +24,6 @@ include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/dependencies/entt/src)
 include_directories(${PROJECT_SOURCE_DIR}/dependencies/glm)
 
 # Remove a trailing space that causes linking errors.
@@ -32,15 +31,13 @@ string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
 
 # Source files for the project.
 set(SOURCE_FILES
-    src/spare/camera.cc
-    src/spare/camera.h
     src/spare/engine.cc
     src/spare/engine.h
     src/spare/main.cc
     src/spare/material.cc
     src/spare/material.h
-    src/spare/mesh.cc
-    src/spare/mesh.h
+    src/spare/mesh_data.cc
+    src/spare/mesh_data.h
     src/spare/resource_loader.cc
     src/spare/resource_loader.h
     src/spare/shader.cc
@@ -51,6 +48,17 @@ set(SOURCE_FILES
     src/spare/spatial.h
     src/spare/texture.cc
     src/spare/texture.h
+
+    src/spare/go/camera.cc
+    src/spare/go/camera.h
+    src/spare/go/camera_arm.cc
+    src/spare/go/camera_arm.h
+    src/spare/go/go.cc
+    src/spare/go/go.h
+    src/spare/go/go_tree.cc
+    src/spare/go/go_tree.h
+    src/spare/go/mesh.cc
+    src/spare/go/mesh.h
 
     src/spare/phiz/aabb.cc
     src/spare/phiz/aabb.h

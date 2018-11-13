@@ -5,16 +5,8 @@
 
 namespace spare {
 
-PhizEngine::PhizEngine(entt::registry<> *registry) : registry(registry) {}
+PhizEngine::PhizEngine() {}
 
-void PhizEngine::IntegrateRegistry(float delta) {
-  auto view = registry->view<PhizObject, Spatial>();
-  for (auto entity : view) {
-    auto &spatial = view.get<Spatial>(entity);
-    auto &phiz_object = view.get<PhizObject>(entity);
-
-    phiz_object.Integrate(delta, spatial);
-  }
-}
+void PhizEngine::Integrate(float delta) {}
 
 }  // namespace spare

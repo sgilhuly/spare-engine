@@ -1,17 +1,12 @@
 #pragma once
 
-#include "entt/entt.hpp"
-
 namespace spare {
 
 class PhizEngine {
  public:
-  PhizEngine(entt::registry<> *registry);
+  PhizEngine();
 
-  void IntegrateRegistry(float delta);
-
- private:
-  entt::registry<> *registry;
+  void Integrate(float delta);
 };
 
 }  // namespace spare

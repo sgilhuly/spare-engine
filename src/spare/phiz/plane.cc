@@ -10,7 +10,8 @@ Plane Plane::Normalized() const {
 }
 
 Intersection Plane::IntersectBSphere(const BSphere &other) const {
-  float distance_from_centre = std::fabs(glm::dot(normal, other.centre) + distance);
+  float distance_from_centre =
+      std::fabs(glm::dot(normal, other.centre) + distance);
   float distance_from_sphere = distance_from_centre - other.radius;
 
   return {distance_from_sphere < 0, distance_from_sphere};

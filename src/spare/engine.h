@@ -5,16 +5,15 @@
 #include "GL/glew.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_opengl.h"
-#include "entt/entt.hpp"
 #include "glm/glm.hpp"
 
-#include "spare/camera.h"
+#include "spare/go/go_tree.h"
 #include "spare/phiz/phiz_engine.h"
 #include "spare/resource_loader.h"
 #include "spare/spatial.h"
 
 namespace spare {
-class Engine {
+class Engine : public GoTree {
  public:
   Engine(int width, int height);
   int OnExecute();
@@ -26,12 +25,10 @@ class Engine {
 
  private:
   bool running = true;
-  Camera camera;
   PhizEngine phiz_engine;
   ResourceLoader resources;
   SDL_Window *window = NULL;
   SDL_GLContext context;
-  entt::registry<> registry;
   glm::vec4 options;
 
   int width;

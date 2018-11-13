@@ -1,4 +1,4 @@
-#include "spare/mesh.h"
+#include "spare/mesh_data.h"
 
 #include <cstdint>
 #include <cstdio>
@@ -19,9 +19,9 @@ using std::cout;
 using std::endl;
 
 namespace spare {
-Mesh::Mesh() {}
+MeshData::MeshData() {}
 
-bool Mesh::Init(const std::string &filepath) {
+bool MeshData::Init(const std::string &filepath) {
   if (!LoadAssimp(filepath)) {
     cout << "Failed to load " << filepath << endl;
     return false;
@@ -68,7 +68,7 @@ bool Mesh::Init(const std::string &filepath) {
   return true;
 }
 
-bool Mesh::LoadAssimp(const std::string &path) {
+bool MeshData::LoadAssimp(const std::string &path) {
   Assimp::Importer importer;
 
   unsigned int flags =

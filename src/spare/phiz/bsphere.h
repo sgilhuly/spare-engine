@@ -10,7 +10,7 @@ struct BSphere {
   glm::vec3 centre;
   float radius;
 
-  Intersection IntersectBSphere (const BSphere &other) const;
+  Intersection IntersectBSphere(const BSphere &other) const;
 };
 
 }  // namespace spare
