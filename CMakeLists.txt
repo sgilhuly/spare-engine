@@ -15,16 +15,15 @@ find_package(assimp REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
 
 include_directories(${ASSIMP_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
 include_directories(${OPENGL_INCLUDE_DIR})
 include_directories(${SDL2_INCLUDE_DIRS})
-include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/dependencies/glm)
+include_directories(${PROJECT_SOURCE_DIR}/dependencies/stb)
 
 # Remove a trailing space that causes linking errors.
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
@@ -46,6 +45,7 @@ set(SOURCE_FILES
     src/spare/shader_program.h
     src/spare/spatial.cc
     src/spare/spatial.h
+    src/spare/stb_host.cc
     src/spare/texture.cc
     src/spare/texture.h
 
@@ -104,5 +104,4 @@ target_link_libraries(spare-engine
     ${ASSIMP_LIBRARIES}
     ${GLEW_LIBRARIES}
     ${OPENGL_LIBRARY}
-    ${SDL2_LIBRARIES}
-    ${SDL2_IMAGE_LIBRARIES})
+    ${SDL2_LIBRARIES})

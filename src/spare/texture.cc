@@ -8,8 +8,7 @@
 #include <string>
 
 #include "GL/glew.h"
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
+#include "stb_image.h"
 
 using std::cout;
 using std::endl;
@@ -21,43 +20,25 @@ using std::endl;
 namespace spare {
 namespace {
 
-GLuint loadImageSdl(const char *imagepath) {
-  SDL_Surface *surface = IMG_Load(imagepath);
-  if (surface == NULL) {
+GLuint loadImageStb(const char *imagepath) {
+  int width, height, format;
+  uint8_t *data = stbi_load(imagepath, &width, &height, &format, 0);
+  if (!data) {
     cout << imagepath << " could not be opened" << endl;
     return 0;
   }
-
-  // Flip the image by swapping the rows, outside to in.
-  uint8_t *temp_row = new uint8_t[surface->pitch];
-  int rows_to_swap = static_cast<int>(surface->h * 0.5f);
-  for (int i = 0; i < rows_to_swap; i++) {
-    memcpy(temp_row,
-           static_cast<uint8_t *>(surface->pixels) + (surface->pitch * i),
-           surface->pitch);
-    memcpy(static_cast<uint8_t *>(surface->pixels) + (surface->pitch * i),
-           static_cast<uint8_t *>(surface->pixels) +
-               (surface->pitch * (surface->h - i - 1)),
-           surface->pitch);
-    memcpy(static_cast<uint8_t *>(surface->pixels) +
-               (surface->pitch * (surface->h - i - 1)),
-           temp_row, surface->pitch);
-  }
-  delete[] temp_row;
 
   GLuint textureID;
   glGenTextures(1, &textureID);
   glBindTexture(GL_TEXTURE_2D, textureID);
 
   int mode = GL_RGB;
-  if (surface->format->BytesPerPixel == 4) {
+  if (format == STBI_rgb_alpha) {
     mode = GL_RGBA;
   }
 
-  glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode,
-               GL_UNSIGNED_BYTE, surface->pixels);
-  SDL_FreeSurface(surface);
-  surface = NULL;
+  glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, mode,
+               GL_UNSIGNED_BYTE, data);
 
   // Poor filtering, or ...
   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -74,11 +55,13 @@ GLuint loadImageSdl(const char *imagepath) {
 
   return textureID;
 }
+
 }  // namespace
+
 Texture::Texture() {}
 
 bool Texture::Init(const std::string &imagepath) {
-  if (!(id = loadImageSdl(imagepath.c_str()))) {
+  if (!(id = loadImageStb(imagepath.c_str()))) {
     cout << "Failed to load " << imagepath << " as an image" << endl;
     return false;
   }
@@ -91,3 +74,4 @@ void Texture::Cleanup() {
   id = 0;
 }
 }  // namespace spare
+

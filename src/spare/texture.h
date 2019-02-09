@@ -8,7 +8,7 @@ namespace spare {
 class Texture {
  public:
   Texture();
-  // Load a regular image texture through SDL
+  // Load a regular image texture through stb
   bool Init(const std::string &imagepath);
   void Cleanup();
 

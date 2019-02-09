@@ -6,12 +6,12 @@
 
 #include "GL/glew.h"
 #include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
 #include "SDL2/SDL_opengl.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
+#include "stb_image.h"
 
 #include "spare/go/camera.h"
 #include "spare/go/camera_arm.h"
@@ -75,12 +75,6 @@ bool Engine::OnInit() {
     return false;
   }
 
-  int img_flags = IMG_INIT_PNG;
-  if (!(IMG_Init(img_flags) & img_flags)) {
-    cout << "Could not initialize SDL_image: " << IMG_GetError() << endl;
-    return false;
-  }
-
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -117,6 +111,9 @@ bool Engine::OnInit() {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glClearColor(0.1f, 0.2f, 0.3f, 1);
+
+  // Configure stb
+  stbi_set_flip_vertically_on_load(true);
 
   // TODO: fix this with proper scene loading
   MeshData *pillar_mesh = resources.GetMesh("stuff/cylinder.obj");
