@@ -10,7 +10,6 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
-#include "glm/gtx/io.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "stb_image.h"
 
@@ -134,8 +133,6 @@ bool Engine::OnInit() {
     int z = i / 2;
     go = new Mesh(this, pillar_mesh, bricks_mat);
     rotator = new Rotator(this, glm::radians(90.0f * i), glm::vec3(0, 1, 0));
-    cout << "Mesh rotation is " << go->grotation() << endl;
-    cout << "Rotator rotation is " << rotator->grotation() << endl;
     rotator->SetPosition(glm::vec3(x * 4 - 2, 0, z * 4 - 2));
     rotator->AddChild(go);
     root->AddChild(rotator);

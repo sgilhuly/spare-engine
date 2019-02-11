@@ -44,8 +44,8 @@ class Go {
     position += t;
     dirty = true;
   }
-  void Rotate(const glm::quat &q) {
-    rotation *= q;
+  void Rotate(float angle, const glm::vec3 &axis) {
+    rotation *= glm::angleAxis(angle, axis);
     dirty = true;
   }
 
