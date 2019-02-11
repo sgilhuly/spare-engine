@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/quaternion.hpp"
 
 namespace spare {
 
@@ -22,7 +22,10 @@ class Go {
 
   glm::vec3 ToGlobal(const glm::vec3 &point) const;
 
+  // Recurse the tree, calling Update on all elements
   void Traverse(float delta);
+
+  // Recurse the tree, calling Draw on all elements
   void TraverseDraw(const glm::mat4 &projection, const glm::mat4 &view);
 
   void SetPosition(const glm::vec3 &p) {
@@ -46,9 +49,13 @@ class Go {
     dirty = true;
   }
 
+  const glm::vec3 &gposition() { return position; }
+  const glm::quat &grotation() { return rotation; }
+  const glm::vec3 &gscale() { return scale; }
+
  protected:
   glm::vec3 position = glm::vec3();
-  glm::quat rotation = glm::quat();
+  glm::quat rotation = glm::angleAxis(0.0f, glm::vec3(0, 1, 0));
   glm::vec3 scale = glm::vec3(1);
 
   glm::mat4 global_transform;

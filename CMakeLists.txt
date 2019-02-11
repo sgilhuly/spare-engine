@@ -59,6 +59,8 @@ set(SOURCE_FILES
     src/spare/go/go_tree.h
     src/spare/go/mesh.cc
     src/spare/go/mesh.h
+    src/spare/go/rotator.cc
+    src/spare/go/rotator.h
 
     src/spare/phiz/aabb.cc
     src/spare/phiz/aabb.h

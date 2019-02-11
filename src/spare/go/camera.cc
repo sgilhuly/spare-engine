@@ -19,8 +19,6 @@ Camera::Camera(GoTree *tree, int width, int height, float fov, float near_clip,
 Camera::~Camera(){};
 
 void Camera::Update(float delta) {
-  Go::Update(delta);
-
   view =
       glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0)) *
       global_transform;

@@ -10,6 +10,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/io.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "stb_image.h"
 
@@ -17,6 +18,7 @@
 #include "spare/go/camera_arm.h"
 #include "spare/go/go.h"
 #include "spare/go/mesh.h"
+#include "spare/go/rotator.h"
 #include "spare/phiz/phiz_object.h"
 #include "spare/resource_loader.h"
 #include "spare/spatial.h"
@@ -125,13 +127,18 @@ bool Engine::OnInit() {
       "stuff/rgb/rgb_diffuse.png", "stuff/rgb/rgb_normal.png",
       "stuff/rgb/rgb_rad.png", "stuff/basic_lighting");
   Go *go;
+  Go *rotator;
 
   for (int i = 0; i < 4; ++i) {
     int x = i % 2;
     int z = i / 2;
     go = new Mesh(this, pillar_mesh, bricks_mat);
-    go->SetPosition(glm::vec3(x * 4 - 2, 0, z * 4 - 2));
-    root->AddChild(go);
+    rotator = new Rotator(this, glm::radians(90.0f * i), glm::vec3(0, 1, 0));
+    cout << "Mesh rotation is " << go->grotation() << endl;
+    cout << "Rotator rotation is " << rotator->grotation() << endl;
+    rotator->SetPosition(glm::vec3(x * 4 - 2, 0, z * 4 - 2));
+    rotator->AddChild(go);
+    root->AddChild(rotator);
   }
 
   go = new Mesh(this, axes_mesh, rgb_mat);
@@ -141,7 +148,7 @@ bool Engine::OnInit() {
   root->AddChild(camera_arm);
 
   Go *camera = new Camera(this, width, height, 60.0f, 0.1f, 100.0f);
-  camera->SetPosition(glm::vec3(0, 0, -20));
+  camera->SetPosition(glm::vec3(0, 0, -12));
   camera_arm->AddChild(camera);
 
   options = glm::vec4(1, 1, 1, 1);

@@ -58,7 +58,7 @@ void Go::Traverse(float delta) {
   Update(delta);
 
   if (dirty) {
-    local_transform = glm::translate(glm::toMat4(rotation), position);
+    local_transform = glm::translate(glm::mat4(), position) * glm::toMat4(rotation);
     if (parent) {
       global_transform = local_transform * parent->global_transform;
     } else {

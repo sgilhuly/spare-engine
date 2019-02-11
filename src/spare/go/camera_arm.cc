@@ -16,8 +16,6 @@ CameraArm::CameraArm(GoTree *tree) : Go(tree) {}
 CameraArm::~CameraArm() {}
 
 void CameraArm::Update(float delta) {
-  Go::Update(delta);
-
   int x = 0;
   int y = 0;
   int state = SDL_GetRelativeMouseState(&x, &y);
